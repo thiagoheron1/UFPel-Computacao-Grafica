@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+
+</head>
+
+<body>
+    <form>
+        <select id="listOptions" onchange="main.selectObject(this.value)" size="8">
+            <option value="0" selected>0 - Object T</option>
+        </select>
+    </form>
+    <br>
+
+    <button type="button" onclick="add()">Insert option</button>
+    <button type="button" onclick="remove();">Remove option</button>
+    <br><br><br>
+
+    <div styles="display:inline">
+        <div id="uiContainer">
+            <div id="ui">
+                <div id="x"></div>
+                <div id="y"></div>
+                <div id="z"></div>
+                <div id="angleX"></div>
+                <div id="angleY"></div>
+                <div id="angleZ"></div>
+                <div id="scaleX"></div>
+                <div id="scaleY"></div>
+                <div id="scaleZ"></div>
+            </div>
+        </div>
+        <canvas id="canvas" width="1000" height="1000">My Canvas</canvas>
+    </div>
+</body>
+
+</html>
+<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
+<script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
+<script src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
+<script src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
+<script src="script.js"></script>
+
+<script>
+
+    function add() {
+        // get reference to select element
+
+        var listOptions = document.getElementById('listOptions');
+    
+        var opt = document.createElement('option');
+        opt.appendChild(document.createTextNode(String(listOptions.length).concat(' - Object T')));
+
+        // set value property of opt
+        opt.value = listOptions.length;
+
+        // add opt to end of listOptionsect box (listOptions)
+        listOptions.appendChild(opt);
+
+        main.addObject();
+    }
+    function remove() {
+
+
+        // remove 2nd option in select box (sel)
+        var listOptions = document.getElementById("listOptions");
+        var indexOption = listOptions.options[listOptions.selectedIndex].value;
+
+        
+        listOptions.removeChild(listOptions.options[indexOption]);
+        main.removeObject(indexOption);
+        
+        
+
+
+        listOptions.selectedIndex = String(indexOption-1);
+    }
+</script>
