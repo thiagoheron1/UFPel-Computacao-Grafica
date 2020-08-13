@@ -3,11 +3,11 @@ class ObjectF {
 
     this.matrix = []
     this.translation = [45, 150, 0];
-    this.rotation = [this.degToRad(40), this.degToRad(25), this.degToRad(325)];
+    this.rotation = [this.degToRad(0), this.degToRad(0), this.degToRad(0)];
     this.scale = [1, 1, 1];
     this.color = [Math.random(), Math.random(), Math.random(), 1];
     console.log(this.color);
-    
+
     this.m4 = {
 
       projection: function (width, height, depth) {
@@ -92,8 +92,8 @@ class ObjectF {
 
         return [
           1, 0, 0, 0,
-          0, c, s, 0,
-          0, -s, c, 0,
+          0, c, -s, 0,
+          0, s, c, 0,
           0, 0, 0, 1,
         ];
       },
@@ -104,9 +104,9 @@ class ObjectF {
         var s = Math.sin(angleInRadians);
 
         return [
-          c, 0, -s, 0,
+          c, 0, s, 0,
           0, 1, 0, 0,
-          s, 0, c, 0,
+          -s, 0, c, 0,
           0, 0, 0, 1,
         ];
       },
@@ -117,8 +117,8 @@ class ObjectF {
         var s = Math.sin(angleInRadians);
 
         return [
-          c, s, 0, 0,
-          -s, c, 0, 0,
+          c, -s, 0, 0,
+          s, c, 0, 0,
           0, 0, 1, 0,
           0, 0, 0, 1,
         ];
@@ -199,7 +199,6 @@ class Main {
     this.positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
     this.matrixLocation = this.gl.getUniformLocation(this.program, "u_matrix");
     this.colorLocation = this.gl.getUniformLocation(this.program, "u_color");
-    
 
     this.createGeometryBuffer();
     this.vao = this.createVertexArrayObject();
@@ -208,25 +207,25 @@ class Main {
     this.object = [
       new ObjectF()
     ];
-    this.indexObject = 0;
+    this.objectSelected = 0;
     this.drawAllObjects();
   }
 
-  addObject(){
+  addObject() {
     this.object.push(new ObjectF());
     this.drawAllObjects();
   }
 
-  removeObject(index){
+  removeObject(index) {
     console.log("index", index);
     console.log(this.object);
     this.object.splice(index);
     console.log(this.object);
     this.drawAllObjects();
   }
-  
-  selectObject(index){
-    this.indexObject = index;
+
+  selectObject(index) {
+    this.objectSelected = index;
   }
 
   connectWebGL() {
@@ -424,11 +423,11 @@ class Main {
   radToDeg(r) {
     return r * 180 / Math.PI;
   }
-  
+
   updatePosition(index, main) {
     //console.log("[updatePosition] > Success!");
     return function (event, ui) {
-      main.object[main.indexObject].translation[index] = ui.value;
+      main.object[main.objectSelected].translation[index] = ui.value;
       main.drawScene();
     };
   }
@@ -437,8 +436,8 @@ class Main {
     //console.log("[updateRotation] > Success!");
     return function (event, ui) {
       var angleInDegrees = ui.value;
-      var angleInRadians = main.object[main.indexObject].degToRad(angleInDegrees);
-      main.object[main.indexObject].rotation[index] = angleInRadians;
+      var angleInRadians = main.object[main.objectSelected].degToRad(angleInDegrees);
+      main.object[main.objectSelected].rotation[index] = angleInRadians;
       main.drawScene();
     };
   }
@@ -446,14 +445,70 @@ class Main {
   updateScale(index, main) {
     //console.log("[updateScale] > Success!");
     return function (event, ui) {
-      main.object[main.indexObject].scale[index] = ui.value;
+      main.object[main.objectSelected].scale[index] = ui.value;
+      main.drawScene();
+    };
+  }
+
+  updateDeltaTQuadratic(main) {
+    console.log("[updateDeltaTQuadratic] > Success!");
+    return function (event, ui) {
+      console.log(ui);
+      var p = [
+        {
+          "x": 350,
+          "y": 350,
+        },
+        {
+          "x": 500,
+          "y": 350,
+        },
+        {
+          "x": 800,
+          "y": 800,
+        },
+      ];
+      var t = ui.value;
+      //x = (1 - t) * (1 - t) * p[0].x + 2 * (1 - t) * t * p[1].x + t * t * p[2].x;
+      //y = (1 - t) * (1 - t) * p[0].y + 2 * (1 - t) * t * p[1].y + t * t * p[2].y;
+      main.object[main.objectSelected].translation[0] = (1 - t) * (1 - t) * main.object[main.objectSelected].translation[0] + 2 * (1 - t) * t * p[1].x + t * t * p[2].x;
+      main.object[main.objectSelected].translation[1] = (1 - t) * (1 - t) * main.object[main.objectSelected].translation[1] + 2 * (1 - t) * t * p[1].y + t * t * p[2].y;
+      main.drawScene();
+    };
+  }
+
+  updateDeltaTCubic(main) {
+    console.log("[updateDeltaTCubic] > Success!");
+    return function (event, ui) {
+      console.log(ui);
+      var p = [
+        {
+          "x": 350,
+          "y": 350,
+        },
+        {
+          "x": 500,
+          "y": 350,
+        },
+        {
+          "x": 800,
+          "y": 800,
+        },
+        {
+          "x": 999,
+          "y": 900,
+        },
+      ];
+      var t = ui.value;
+      main.object[main.objectSelected].translation[0] = (1-t)*(1-t)*(1-t)*main.object[main.objectSelected].translation[0] + 3*(1-t)*(1-t)*t*p[1].x + 3*(1-t)*t*t*p[2].x + t*t*t*p[3].x;
+      main.object[main.objectSelected].translation[1] = (1-t)*(1-t)*(1-t)*main.object[main.objectSelected].translation[1] + 3*(1-t)*(1-t)*t*p[1].y + 3*(1-t)*t*t*p[2].y + t*t*t*p[3].y;
       main.drawScene();
     };
   }
 
 
   drawAllObjects() {
-    
+
     //console.log("[drawScene][resizeCanvasToDisplaySize] > Setting...");
     webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
 
@@ -481,7 +536,7 @@ class Main {
       //console.log("this.colorLocation", this.colorLocation);
       //console.log("this.color", this.object[index].color);
       this.gl.uniform4fv(this.colorLocation, this.object[index].color);
-      
+
       //console.log("[drawScene][m4] > Setting...");
       this.object[index].matrix = this.object[index].m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
       this.object[index].matrix = this.object[index].m4.translate(this.object[index].matrix, this.object[index].translation[0], this.object[index].translation[1], this.object[index].translation[2]);
@@ -490,23 +545,23 @@ class Main {
       this.object[index].matrix = this.object[index].m4.zRotate(this.object[index].matrix, this.object[index].rotation[2]);
       this.object[index].matrix = this.object[index].m4.scale(this.object[index].matrix, this.object[index].scale[0], this.object[index].scale[1], this.object[index].scale[2]);
 
-    // Set the matrix.
-    //console.log("[drawScene][uniformMatrix4fv] > Setting...");
+      // Set the matrix.
+      //console.log("[drawScene][uniformMatrix4fv] > Setting...");
       //console.log("Prints:", index);
       this.gl.uniformMatrix4fv(this.matrixLocation, false, this.object[index].matrix);
-  
+
       // Draw the geometry.
       var primitiveType = this.gl.TRIANGLES;
       var offset = 0;
       var count = 16 * 6;
       //console.log("[drawScene][drawArrays] > Setting...");
       this.gl.drawArrays(primitiveType, offset, count);
-      
+
     }
   }
 
   drawScene() {
-    
+
     //console.log("[drawScene][resizeCanvasToDisplaySize] > Setting...");
     webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
 
@@ -529,33 +584,33 @@ class Main {
 
     // Compute the matrix
     //console.log("[drawScene][m4] > Setting...");
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.translate(this.object[this.indexObject].matrix, this.object[this.indexObject].translation[0], this.object[this.indexObject].translation[1], this.object[this.indexObject].translation[2]);
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.xRotate(this.object[this.indexObject].matrix, this.object[this.indexObject].rotation[0]);
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.yRotate(this.object[this.indexObject].matrix, this.object[this.indexObject].rotation[1]);
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.zRotate(this.object[this.indexObject].matrix, this.object[this.indexObject].rotation[2]);
-    this.object[this.indexObject].matrix = this.object[this.indexObject].m4.scale(this.object[this.indexObject].matrix, this.object[this.indexObject].scale[0], this.object[this.indexObject].scale[1], this.object[this.indexObject].scale[2]);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.translate(this.object[this.objectSelected].matrix, this.object[this.objectSelected].translation[0], this.object[this.objectSelected].translation[1], this.object[this.objectSelected].translation[2]);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.xRotate(this.object[this.objectSelected].matrix, this.object[this.objectSelected].rotation[0]);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.yRotate(this.object[this.objectSelected].matrix, this.object[this.objectSelected].rotation[1]);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.zRotate(this.object[this.objectSelected].matrix, this.object[this.objectSelected].rotation[2]);
+    this.object[this.objectSelected].matrix = this.object[this.objectSelected].m4.scale(this.object[this.objectSelected].matrix, this.object[this.objectSelected].scale[0], this.object[this.objectSelected].scale[1], this.object[this.objectSelected].scale[2]);
 
     // Set the matrix.
     //console.log("[drawScene][uniformMatrix4fv] > Setting...");
     for (let index = 0; index < this.object.length; index++) {
 
-       // Set the color.
-    //console.log("[drawScene][uniform4fv] > Setting...");
-    //console.log("this.colorLocation", this.colorLocation);
-    //console.log("this.color", this.object[this.indexObject].color);
-    this.gl.uniform4fv(this.colorLocation, this.object[index].color);
+      // Set the color.
+      //console.log("[drawScene][uniform4fv] > Setting...");
+      //console.log("this.colorLocation", this.colorLocation);
+      //console.log("this.color", this.object[this.objectSelected].color);
+      this.gl.uniform4fv(this.colorLocation, this.object[index].color);
 
       //console.log("Prints:", index);
       this.gl.uniformMatrix4fv(this.matrixLocation, false, this.object[index].matrix);
-  
+
       // Draw the geometry.
       var primitiveType = this.gl.TRIANGLES;
       var offset = 0;
       var count = 16 * 6;
       //console.log("[drawScene][drawArrays] > Setting...");
       this.gl.drawArrays(primitiveType, offset, count);
-      
+
     }
   }
 
@@ -564,15 +619,15 @@ class Main {
 
 main = new Main();
 
-for (let index = 0; index < main.object.length; index++) {
-  webglLessonsUI.setupSlider("#x", { value: main.object[main.indexObject].translation[0], slide: main.updatePosition(0, main), max: main.gl.canvas.width });
-  webglLessonsUI.setupSlider("#y", { value: main.object[main.indexObject].translation[1], slide: main.updatePosition(1, main), max: main.gl.canvas.height });
-  webglLessonsUI.setupSlider("#z", { value: main.object[main.indexObject].translation[2], slide: main.updatePosition(2, main), min:-1000, max: main.gl.canvas.height });
-  webglLessonsUI.setupSlider("#angleX", { value: main.radToDeg(main.object[main.indexObject].rotation[0]), slide: main.updateRotation(0, main), max: 360 });
-  webglLessonsUI.setupSlider("#angleY", { value: main.radToDeg(main.object[main.indexObject].rotation[1]), slide: main.updateRotation(1, main), max: 360 });
-  webglLessonsUI.setupSlider("#angleZ", { value: main.radToDeg(main.object[main.indexObject].rotation[2]), slide: main.updateRotation(2, main), max: 360 });
-  webglLessonsUI.setupSlider("#scaleX", { value: main.object[main.indexObject].scale[0], slide: main.updateScale(0, main), min: -5, max: 5, step: 0.01, precision: 2 });
-  webglLessonsUI.setupSlider("#scaleY", { value: main.object[main.indexObject].scale[1], slide: main.updateScale(1, main), min: -5, max: 5, step: 0.01, precision: 2 });
-  webglLessonsUI.setupSlider("#scaleZ", { value: main.object[main.indexObject].scale[2], slide: main.updateScale(2, main), min: -5, max: 5, step: 0.01, precision: 2 });
 
-}
+  webglLessonsUI.setupSlider("#x", { value: main.object[main.objectSelected].translation[0], slide: main.updatePosition(0, main), max: main.gl.canvas.width });
+  webglLessonsUI.setupSlider("#y", { value: main.object[main.objectSelected].translation[1], slide: main.updatePosition(1, main), max: main.gl.canvas.height });
+  webglLessonsUI.setupSlider("#z", { value: main.object[main.objectSelected].translation[2], slide: main.updatePosition(2, main), max: main.gl.canvas.height });
+  webglLessonsUI.setupSlider("#angleX", { value: main.radToDeg(main.object[main.objectSelected].rotation[0]), slide: main.updateRotation(0, main), max: 360 });
+  webglLessonsUI.setupSlider("#angleY", { value: main.radToDeg(main.object[main.objectSelected].rotation[1]), slide: main.updateRotation(1, main), max: 360 });
+  webglLessonsUI.setupSlider("#angleZ", { value: main.radToDeg(main.object[main.objectSelected].rotation[2]), slide: main.updateRotation(2, main), max: 360 });
+  webglLessonsUI.setupSlider("#scaleX", { value: main.object[main.objectSelected].scale[0], slide: main.updateScale(0, main), min: -5, max: 5, step: 0.01, precision: 2 });
+  webglLessonsUI.setupSlider("#scaleY", { value: main.object[main.objectSelected].scale[1], slide: main.updateScale(1, main), min: -5, max: 5, step: 0.01, precision: 2 });
+  webglLessonsUI.setupSlider("#scaleZ", { value: main.object[main.objectSelected].scale[2], slide: main.updateScale(2, main), min: -5, max: 5, step: 0.01, precision: 2 });
+  webglLessonsUI.setupSlider("#deltaTQuadratic", { value: 0, slide: main.updateDeltaTQuadratic(main), min: 0, max: 1, step: 0.01 });
+  webglLessonsUI.setupSlider("#deltaTCubic", { value: 0, slide: main.updateDeltaTCubic(main), min: 0, max: 1, step: 0.01 });
