@@ -2,83 +2,68 @@
 <html>
 
 <head>
+
+    <style type="text/css">
+        html,
+        body {
+            margin: 0px;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        #text {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            z-index: 10;
+        }
+    </style>
 </head>
 
 <body>
+    <!-- Canvas -->
+    <div class="container">
+        <canvas id="canvas" width="600" height="600">My Canvas</canvas>
+        <canvas id="text" width="600" height="600"></canvas>
+    </div>
 
-    <form>
-        <select id="listOptions" onchange="main.selectObject(this.value)" size="8">
-            <option value="0" selected>0 - Object T</option>
-        </select>
-        <br>
-        <button type="button" onclick="add()">Insert option</button>
-        <button type="button" onclick="remove();">Remove option</button>
-    </form>
-
-    <br><br><br>
-
+    <!-- Controllers -->
     <div id="uiContainer">
         <div id="ui">
+            <div id="deltaTQuadratic"></div>
+            <div id="deltaTCubic"></div>
             <div id="x"></div>
             <div id="y"></div>
             <div id="z"></div>
-            <div id="angleX"></div>
-            <div id="angleY"></div>
-            <div id="angleZ"></div>
+            <div id="rotationAxisX"></div>
+            <div id="rotationAxisY"></div>
+            <div id="rotationAxisZ"></div>
             <div id="scaleX"></div>
             <div id="scaleY"></div>
             <div id="scaleZ"></div>
-            <div id="deltaTQuadratic"></div>
-            <div id="deltaTCubic"></div>
+            <br><br><br>
+            <form>
+                <select id="listOptions" onchange="main.selectObject(this.value)" size="8">
+                    <option value="0" selected>0 - Object T</option>
+                </select>
+                <br>
+                <button type="button" onclick="add()">Insert option</button>
+                <button type="button" onclick="remove();">Remove option</button>
+            </form>
         </div>
     </div>
-
-
-    <canvas id="canvas" width="1000" height="1000" styles="left:right;">My Canvas</canvas>
-
-
 </body>
 
 </html>
-<script src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
-<script src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
-<script src="script.js"></script>
-
-<script>
-
-    function add() {
-        // get reference to select element
-
-        var listOptions = document.getElementById('listOptions');
-
-        var opt = document.createElement('option');
-        opt.appendChild(document.createTextNode(String(listOptions.length).concat(' - Object T')));
-
-        // set value property of opt
-        opt.value = listOptions.length;
-
-        // add opt to end of listOptionsect box (listOptions)
-        listOptions.appendChild(opt);
-
-        main.addObject();
-    }
-    function remove() {
-
-
-        // remove 2nd option in select box (sel)
-        var listOptions = document.getElementById("listOptions");
-        var indexOption = listOptions.options[listOptions.selectedIndex].value;
-
-
-        listOptions.removeChild(listOptions.options[indexOption]);
-        main.removeObject(indexOption);
-
-
-
-
-        listOptions.selectedIndex = String(indexOption - 1);
-    }
-</script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
+<script type="text/javascript" src="script.js"></script>
