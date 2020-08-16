@@ -7,6 +7,7 @@
         html,
         body {
             margin: 0px;
+            margin-left: 25px;
         }
 
         canvas {
@@ -24,6 +25,7 @@
             z-index: 10;
         }
     </style>
+
 </head>
 
 <body>
@@ -36,8 +38,11 @@
     <!-- Controllers -->
     <div id="uiContainer">
         <div id="ui">
-            <div id="deltaTQuadratic"></div>
-            <div id="deltaTCubic"></div>
+            <div id="cameraAngle"></div>
+            <div id="cameraX"></div>
+            <div id="cameraY"></div>
+            <div id="bezierQuadratic"></div>
+            <div id="bezierrCubic"></div>
             <div id="x"></div>
             <div id="y"></div>
             <div id="z"></div>
@@ -53,17 +58,23 @@
                     <option value="0" selected>0 - Object T</option>
                 </select>
                 <br>
-                <button type="button" onclick="add()">Insert option</button>
-                <button type="button" onclick="remove();">Remove option</button>
+                <button type="button" onclick="interfaceHtml.add()">Insert option</button>
+                <button type="button" onclick="interfaceHtml.remove();">Remove option</button>
             </form>
         </div>
     </div>
 </body>
 
 </html>
+
+<!-- Scripts -->
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
+
+<!--
+    <script type="text/javascript" src="camera.js"></script>
+-->
 <script type="text/javascript" src="script.js"></script>
