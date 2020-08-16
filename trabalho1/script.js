@@ -1,5 +1,9 @@
 
-class Interface {
+class InterfaceHTML {
+  constructor() {
+    this.sliders();
+  }
+    
   add() {
     // get reference to select element
 
@@ -31,6 +35,19 @@ class Interface {
 
 
     listOptions.selectedIndex = String(indexOption - 1);
+  }
+  sliders() {
+    webglLessonsUI.setupSlider("#x", { value: main.listObjects[main.objectSelected].translation[0], slide: main.updatePosition(0, main), max: main.gl.canvas.width });
+    webglLessonsUI.setupSlider("#y", { value: main.listObjects[main.objectSelected].translation[1], slide: main.updatePosition(1, main), max: main.gl.canvas.height });
+    webglLessonsUI.setupSlider("#z", { value: main.listObjects[main.objectSelected].translation[2], slide: main.updatePosition(2, main), max: main.gl.canvas.height });
+    webglLessonsUI.setupSlider("#rotationX", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[0]), slide: main.updateRotation(0, main), max: 360 });
+    webglLessonsUI.setupSlider("#rotationY", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[1]), slide: main.updateRotation(1, main), max: 360 });
+    webglLessonsUI.setupSlider("#rotationZ", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[2]), slide: main.updateRotation(2, main), max: 360 });
+    webglLessonsUI.setupSlider("#scaleX", { value: main.listObjects[main.objectSelected].scale[0], slide: main.updateScale(0, main), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#scaleY", { value: main.listObjects[main.objectSelected].scale[1], slide: main.updateScale(1, main), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#scaleZ", { value: main.listObjects[main.objectSelected].scale[2], slide: main.updateScale(2, main), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#bezierQuadratic", { value: 0, slide: main.updateBezierQuadratic(main), min: 0, max: 1, step: 0.01 });
+    webglLessonsUI.setupSlider("#bezierCubic", { value: 0, slide: main.updateBezierCubic(main), min: 0, max: 1, step: 0.01 });
   }
 }
 
@@ -335,7 +352,7 @@ class Utils {
 
 }
 
-class Object extends Utils{
+class Object extends Utils {
   constructor() {
     super();
     this.matrix = []
@@ -345,6 +362,7 @@ class Object extends Utils{
     this.color = [Math.random(), Math.random(), Math.random(), 1];
   }
 };
+
 
 class Main {
 
@@ -787,23 +805,8 @@ class Main {
 };
 
 
-
-
 // Starting...
 main = new Main();
 utils = new Utils();
-interfaceHtml = new Interface();
-utils = new Utils();
+interfaceHTML = new InterfaceHTML();
 
-// Sliders
-webglLessonsUI.setupSlider("#x", { value: main.listObjects[main.objectSelected].translation[0], slide: main.updatePosition(0, main), max: main.gl.canvas.width });
-webglLessonsUI.setupSlider("#y", { value: main.listObjects[main.objectSelected].translation[1], slide: main.updatePosition(1, main), max: main.gl.canvas.height });
-webglLessonsUI.setupSlider("#z", { value: main.listObjects[main.objectSelected].translation[2], slide: main.updatePosition(2, main), max: main.gl.canvas.height });
-webglLessonsUI.setupSlider("#rotationAxisX", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[0]), slide: main.updateRotation(0, main), max: 360 });
-webglLessonsUI.setupSlider("#rotationAxisY", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[1]), slide: main.updateRotation(1, main), max: 360 });
-webglLessonsUI.setupSlider("#rotationAxisZ", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[2]), slide: main.updateRotation(2, main), max: 360 });
-webglLessonsUI.setupSlider("#scaleX", { value: main.listObjects[main.objectSelected].scale[0], slide: main.updateScale(0, main), min: -5, max: 5, step: 0.01, precision: 2 });
-webglLessonsUI.setupSlider("#scaleY", { value: main.listObjects[main.objectSelected].scale[1], slide: main.updateScale(1, main), min: -5, max: 5, step: 0.01, precision: 2 });
-webglLessonsUI.setupSlider("#scaleZ", { value: main.listObjects[main.objectSelected].scale[2], slide: main.updateScale(2, main), min: -5, max: 5, step: 0.01, precision: 2 });
-webglLessonsUI.setupSlider("#bezierQuadratic", { value: 0, slide: main.updateBezierQuadratic(main), min: 0, max: 1, step: 0.01 });
-webglLessonsUI.setupSlider("#bezierCubic", { value: 0, slide: main.updateBezierCubic(main), min: 0, max: 1, step: 0.01 });
