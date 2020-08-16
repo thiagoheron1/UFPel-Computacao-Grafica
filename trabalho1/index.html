@@ -4,6 +4,7 @@
 <head>
 
     <style type="text/css">
+        @import url("https://webgl2fundamentals.org/webgl/resources/webgl-tutorials.css");
         html,
         body {
             margin: 0px;
@@ -12,6 +13,8 @@
 
         canvas {
             display: block;
+            width: 40vw;
+            height: 40vh;
         }
 
         .container {
@@ -22,8 +25,11 @@
             position: absolute;
             left: 0px;
             top: 0px;
-            z-index: 10;
+            z-index: -10;
+            width: 40vw;
+            height: 40vh;
         }
+
     </style>
 
 </head>
@@ -31,8 +37,8 @@
 <body>
     <!-- Canvas -->
     <div class="container">
-        <canvas id="canvas" width="600" height="600">My Canvas</canvas>
-        <canvas id="text" width="600" height="600"></canvas>
+        <canvas id="canvas">My Canvas</canvas>
+        <canvas id="text"></canvas>
     </div>
 
     <!-- Controllers -->
@@ -46,9 +52,9 @@
             <div id="x"></div>
             <div id="y"></div>
             <div id="z"></div>
-            <div id="rotationAxisX"></div>
-            <div id="rotationAxisY"></div>
-            <div id="rotationAxisZ"></div>
+            <div id="rotationX"></div>
+            <div id="rotationY"></div>
+            <div id="rotationZ"></div>
             <div id="scaleX"></div>
             <div id="scaleY"></div>
             <div id="scaleZ"></div>
@@ -58,11 +64,12 @@
                     <option value="0" selected>0 - Object T</option>
                 </select>
                 <br>
-                <button type="button" onclick="interfaceHtml.add()">Insert option</button>
-                <button type="button" onclick="interfaceHtml.remove();">Remove option</button>
+
             </form>
         </div>
     </div>
+    <button type="button" onclick="interfaceHTML.add()">Insert option</button>
+    <button type="button" onclick="interfaceHTML.remove();">Remove option</button>
 </body>
 
 </html>
@@ -71,10 +78,6 @@
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/m4.js"></script>
-<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
 
-<!--
-    <script type="text/javascript" src="camera.js"></script>
--->
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
 <script type="text/javascript" src="script.js"></script>
