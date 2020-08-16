@@ -3,53 +3,44 @@ class InterfaceHTML {
   constructor() {
     this.sliders();
   }
-    
+
   add() {
-    // get reference to select element
 
     var listOptions = document.getElementById('listOptions');
-
     var opt = document.createElement('option');
-    opt.appendChild(document.createTextNode(String(listOptions.length).concat(' - Object T')));
 
-    // set value property of opt
+    opt.appendChild(document.createTextNode(String(listOptions.length).concat(' - Object T')));
     opt.value = listOptions.length;
 
-    // add opt to end of listOptionsect box (listOptions)
     listOptions.appendChild(opt);
 
-    main.addObject();
+    mainWebGL.addObject();
   }
   remove() {
 
-
-    // remove 2nd option in select box (sel)
     var listOptions = document.getElementById("listOptions");
     var indexOption = listOptions.options[listOptions.selectedIndex].value;
 
-
     listOptions.removeChild(listOptions.options[indexOption]);
-    main.removeObject(indexOption);
-
-
-
+    
+    mainWebGL.removeObject(indexOption);
 
     listOptions.selectedIndex = String(indexOption - 1);
   }
   sliders() {
-    webglLessonsUI.setupSlider("#x", { value: main.listObjects[main.objectSelected].translation[0], slide: main.updatePosition(0, main), max: main.gl.canvas.width });
-    webglLessonsUI.setupSlider("#y", { value: main.listObjects[main.objectSelected].translation[1], slide: main.updatePosition(1, main), max: main.gl.canvas.height });
-    webglLessonsUI.setupSlider("#z", { value: main.listObjects[main.objectSelected].translation[2], slide: main.updatePosition(2, main), max: main.gl.canvas.height });
-    webglLessonsUI.setupSlider("#rotationX", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[0]), slide: main.updateRotation(0, main), max: 360 });
-    webglLessonsUI.setupSlider("#rotationY", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[1]), slide: main.updateRotation(1, main), max: 360 });
-    webglLessonsUI.setupSlider("#rotationZ", { value: utils.radToDeg(main.listObjects[main.objectSelected].rotation[2]), slide: main.updateRotation(2, main), max: 360 });
-    webglLessonsUI.setupSlider("#scaleX", { value: main.listObjects[main.objectSelected].scale[0], slide: main.updateScale(0, main), min: -5, max: 5, step: 0.01, precision: 2 });
-    webglLessonsUI.setupSlider("#scaleY", { value: main.listObjects[main.objectSelected].scale[1], slide: main.updateScale(1, main), min: -5, max: 5, step: 0.01, precision: 2 });
-    webglLessonsUI.setupSlider("#scaleZ", { value: main.listObjects[main.objectSelected].scale[2], slide: main.updateScale(2, main), min: -5, max: 5, step: 0.01, precision: 2 });
-    webglLessonsUI.setupSlider("#bezierQuadratic", { value: 0, slide: main.updateBezierQuadratic(main), min: 0, max: 1, step: 0.01 });
-    webglLessonsUI.setupSlider("#bezierCubic", { value: 0, slide: main.updateBezierCubic(main), min: 0, max: 1, step: 0.01 });
+    webglLessonsUI.setupSlider("#x", { value: mainWebGL.objectSelected.translation[0], slide: mainWebGL.updatePosition(0, mainWebGL), max: mainWebGL.gl.canvas.width });
+    webglLessonsUI.setupSlider("#y", { value: mainWebGL.objectSelected.translation[1], slide: mainWebGL.updatePosition(1, mainWebGL), max: mainWebGL.gl.canvas.height });
+    webglLessonsUI.setupSlider("#z", { value: mainWebGL.objectSelected.translation[2], slide: mainWebGL.updatePosition(2, mainWebGL), max: mainWebGL.gl.canvas.height });
+    webglLessonsUI.setupSlider("#rotationX", { value: utils.radToDeg(mainWebGL.objectSelected.rotation[0]), slide: mainWebGL.updateRotation(0, mainWebGL), max: 360 });
+    webglLessonsUI.setupSlider("#rotationY", { value: utils.radToDeg(mainWebGL.objectSelected.rotation[1]), slide: mainWebGL.updateRotation(1, mainWebGL), max: 360 });
+    webglLessonsUI.setupSlider("#rotationZ", { value: utils.radToDeg(mainWebGL.objectSelected.rotation[2]), slide: mainWebGL.updateRotation(2, mainWebGL), max: 360 });
+    webglLessonsUI.setupSlider("#scaleX", { value: mainWebGL.objectSelected.scale[0], slide: mainWebGL.updateScale(0, mainWebGL), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#scaleY", { value: mainWebGL.objectSelected.scale[1], slide: mainWebGL.updateScale(1, mainWebGL), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#scaleZ", { value: mainWebGL.objectSelected.scale[2], slide: mainWebGL.updateScale(2, mainWebGL), min: -5, max: 5, step: 0.01, precision: 2 });
+    webglLessonsUI.setupSlider("#bezierQuadratic", { value: 0, slide: mainWebGL.updateBezierQuadratic(mainWebGL), min: 0, max: 1, step: 0.01 });
+    webglLessonsUI.setupSlider("#bezierCubic", { value: 0, slide: mainWebGL.updateBezierCubic(mainWebGL), min: 0, max: 1, step: 0.01 });
   }
-}
+};
 
 class Utils {
   constructor() {
@@ -350,7 +341,7 @@ class Utils {
   }
 
 
-}
+};
 
 class Object extends Utils {
   constructor() {
@@ -363,11 +354,55 @@ class Object extends Utils {
   }
 };
 
+class Camera extends Utils {
+  constructor(gl) {
+    super();
+    this.gl = gl;
+    this.fieldOfViewRadians = this.degToRad(60);
+    this.cameraAngleRadians = this.degToRad(0);
 
-class Main {
+    this.aspect = this.gl.canvas.clientWidth / this.gl.canvas.clientHeight;
+    this.zNear = 1;
+    this.zFar = 2000;
+
+    this.radius = 200;
+    this.generateProjectionMatrix();
+  }
+
+  generateProjectionMatrix() {
+    this.projectionMatrix = this.m4.perspective(this.fieldOfViewRadians, this.aspect, this.zNear, this.zFar);
+    this.cameraMatrix = this.m4.yRotation(this.cameraAngleRadians);
+    this.cameraMatrix = this.m4.translate(this.cameraMatrix, 0, 50, this.radius * 1.5);
+
+    this.cameraPosition = [
+      cameraMatrix[12],
+      cameraMatrix[13],
+      cameraMatrix[14],
+    ];
+    this.fPosition = [radius, 0, 0];
+    this.up = [0, 1, 0];
+
+    this.cameraMatrix = this.m4.lookAt(this.cameraPosition, this.fPosition, this.up);
+    this.viewMatrix = this.m4.inverse(this.cameraMatrix);
+    var viewProjectionMatrix = this.m4.multiply(this.projectionMatrix, this.viewMatrix);
+
+    return viewProjectionMatrix;
+  }
+
+  updateCameraAngle(camera) {
+
+    return function (event, ui) {
+      console.log("[Camera][updateCameraAngle] > Starting...");
+      this.cameraAngleRadians = this.degToRad(ui.value);
+    }
+  }
+};
+
+class MainWebGL extends Utils {
 
   constructor() {
-    this.gl = this.connectWebGL();
+    super();
+
     this.vertexShaderSource = `#version 300 es
           in vec4 a_position;
           uniform mat4 u_matrix;
@@ -387,6 +422,7 @@ class Main {
           }
           `;
 
+    this.gl = this.connectWebGL();
     this.vertexShader = this.createShader(this.gl.VERTEX_SHADER, this.vertexShaderSource);
     this.fragmentShader = this.createShader(this.gl.FRAGMENT_SHADER, this.fragmentShaderSource);
     this.program = this.createProgram(this.vertexShader, this.fragmentShader)
@@ -400,35 +436,39 @@ class Main {
     this.setConfigsBuffer();
 
     this.listObjects = [new Object()];
-    this.objectSelected = 0;
+    this.objectSelected = this.listObjects[0];
 
     // Canvas for Labels
     var textCanvas = document.querySelector("#text");
     this.ctx = textCanvas.getContext("2d");
     this.listLine = [];
 
-    this.drawAllObjects();
+    webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
+    webglUtils.resizeCanvasToDisplaySize(this.ctx.canvas);
+
+    this.drawScene();
   }
 
   addObject() {
+    console.log("[MainWebGL][addObject] > Running...");
     this.listObjects.push(new Object());
     this.drawAllObjects();
   }
 
   removeObject(index) {
-    console.log("index", index);
-    console.log(this.listObjects);
+    console.log("[MainWebGL][removeObject] > Running...");
     this.listObjects.splice(index);
-    console.log(this.listObjects);
     this.drawAllObjects();
   }
 
   selectObject(index) {
-    this.objectSelected = index;
+    console.log("[MainWebGL][selectObject] > Running...");
+    this.objectSelected = this.listObjects[index];
   }
 
   connectWebGL() {
     /** @type {HTMLCanvasElement} */
+    console.log("[MainWebGL][connectWebGL] > Running...");
     var canvas = document.querySelector("#canvas");
     var gl = canvas.getContext("webgl2");
     if (!gl) {
@@ -438,12 +478,14 @@ class Main {
   }
 
   createShader(type, source) {
+    console.log("[MainWebGL][createShader] > Running...");
+
     var shader = this.gl.createShader(type);
     this.gl.shaderSource(shader, source);
     this.gl.compileShader(shader);
     var success = this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS);
     if (success) {
-      //console.log("[createShader][" + type + "] > Success!");
+      //console.log("[MainWebGL][createShader][" + type + "] > Success!");
       return shader;
     }
 
@@ -452,6 +494,7 @@ class Main {
   }
 
   createProgram(vertexShader, fragmentShader) {
+    console.log("[MainWebGL][createProgram] > Running...");
     var program = this.gl.createProgram();
     this.gl.attachShader(program, vertexShader);
     this.gl.attachShader(program, fragmentShader);
@@ -464,6 +507,7 @@ class Main {
   }
 
   createGeometryBuffer() {
+    console.log("[MainWebGL][createGeometryBuffer] > Running...");
     var MeshBuffer = this.gl.createBuffer();
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, MeshBuffer);
     this.gl.bufferData(
@@ -602,6 +646,7 @@ class Main {
   }
 
   createVertexArrayObject() {
+    console.log("[MainWebGL][createVertexArrayObject] > Running...");
     var vao = this.gl.createVertexArray();
     this.gl.bindVertexArray(vao);
     this.gl.enableVertexAttribArray(this.positionAttributeLocation);
@@ -610,16 +655,18 @@ class Main {
   }
 
   setConfigsBuffer() {
+    console.log("[MainWebGL][setConfigsBuffer] > Running...");
     var size = 3;               // 3 components per iteration
     var type = this.gl.FLOAT;   // the data is 32bit floats
     var normalize = false;      // don't normalize the data
     var stride = 0;             // 0 = move forward size * sizeof(type) each iteration to get the next position
     var offset = 0;             // start at the beginning of the buffer
     this.gl.vertexAttribPointer(this.positionAttributeLocation, size, type, normalize, stride, offset);
-    //console.log("[setConfigsBuffer] > Success!")
+
   }
 
   drawCanvasLabel() {
+    console.log("[MainWebGL][drawCanvasLabel] > Running...");
     // Clear the 2D Canvas
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
 
@@ -644,119 +691,98 @@ class Main {
   }
 
   drawAllObjects() {
+    console.log("[MainWebGL][drawAllObjects] > Running...");
 
-    //console.log("[drawAllObjects][resizeCanvasToDisplaySize] > Setting...");
-    webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
-    webglUtils.resizeCanvasToDisplaySize(this.ctx.canvas);
-
-    //this.drawCanvasLabel();
-
-    //console.log("[drawAllObjects][Settings] > Starting...");
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clearColor(0, 0, 0, 0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.gl.useProgram(this.program);
     this.gl.bindVertexArray(this.vao);
 
+    let X = 0;
+    let Y = 1;
+    let Z = 2;
+
     for (let index = 0; index < this.listObjects.length; index++) {
-
-      //console.log("[drawAllObjects][uniform4fv] > Setting...");
-      this.gl.uniform4fv(this.colorLocation, this.listObjects[index].color);
-
       //console.log("[drawAllObjects][m4] > Setting...");
-      this.listObjects[index].matrix = this.listObjects[index].m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
-      this.listObjects[index].matrix = this.listObjects[index].m4.translate(this.listObjects[index].matrix, this.listObjects[index].translation[0], this.listObjects[index].translation[1], this.listObjects[index].translation[2]);
-      this.listObjects[index].matrix = this.listObjects[index].m4.xRotate(this.listObjects[index].matrix, this.listObjects[index].rotation[0]);
-      this.listObjects[index].matrix = this.listObjects[index].m4.yRotate(this.listObjects[index].matrix, this.listObjects[index].rotation[1]);
-      this.listObjects[index].matrix = this.listObjects[index].m4.zRotate(this.listObjects[index].matrix, this.listObjects[index].rotation[2]);
-      this.listObjects[index].matrix = this.listObjects[index].m4.scale(this.listObjects[index].matrix, this.listObjects[index].scale[0], this.listObjects[index].scale[1], this.listObjects[index].scale[2]);
+
+      let objectSelected = this.listObjects[this.objectSelected];
+      objectSelected.matrix = objectSelected.m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+      objectSelected.matrix = objectSelected.m4.translate(objectSelected.matrix, objectSelected.translation[X], objectSelected.translation[Y], objectSelected.translation[Z]);
+      objectSelected.matrix = objectSelected.m4.xRotate(objectSelected.matrix, objectSelected.rotation[X]);
+      objectSelected.matrix = objectSelected.m4.yRotate(objectSelected.matrix, objectSelected.rotation[Y]);
+      objectSelected.matrix = objectSelected.m4.zRotate(objectSelected.matrix, objectSelected.rotation[Z]);
+      objectSelected.matrix = objectSelected.m4.scale(objectSelected.matrix, objectSelected.scale[X], objectSelected.scale[Y], objectSelected.scale[Z]);
 
       //console.log("[drawAllObjects][uniformMatrix4fv] > Setting...");
-      this.gl.uniformMatrix4fv(this.matrixLocation, false, this.listObjects[index].matrix);
-
-      //console.log("[drawAllObjects][drawArrays] > Setting...");
-      var primitiveType = this.gl.TRIANGLES;
-      var offset = 0;
-      var count = 16 * 6;
-      this.gl.drawArrays(primitiveType, offset, count);
-
+      this.gl.uniform4fv(this.colorLocation, objectSelected.color);
+      this.gl.uniformMatrix4fv(this.matrixLocation, false, objectSelected.matrix);
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, 16 * 6);
     }
   }
 
   drawScene() {
+    console.log("[MainWebGL][drawScene][Settings] > Running...");
 
-    //console.log("[drawScene][resizeCanvasToDisplaySize] > Setting...");
-    webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
-    webglUtils.resizeCanvasToDisplaySize(this.ctx.canvas);
-
-    //this.drawCanvasLabel();
-
-    //console.log("[drawAllObjects][Settings] > Starting...");
     this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
     this.gl.clearColor(0, 0, 0, 0);
     this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
     this.gl.useProgram(this.program);
     this.gl.bindVertexArray(this.vao);
 
-    //console.log("[drawScene][m4] > Setting...");
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.translate(this.listObjects[this.objectSelected].matrix, this.listObjects[this.objectSelected].translation[0], this.listObjects[this.objectSelected].translation[1], this.listObjects[this.objectSelected].translation[2]);
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.xRotate(this.listObjects[this.objectSelected].matrix, this.listObjects[this.objectSelected].rotation[0]);
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.yRotate(this.listObjects[this.objectSelected].matrix, this.listObjects[this.objectSelected].rotation[1]);
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.zRotate(this.listObjects[this.objectSelected].matrix, this.listObjects[this.objectSelected].rotation[2]);
-    this.listObjects[this.objectSelected].matrix = this.listObjects[this.objectSelected].m4.scale(this.listObjects[this.objectSelected].matrix, this.listObjects[this.objectSelected].scale[0], this.listObjects[this.objectSelected].scale[1], this.listObjects[this.objectSelected].scale[2]);
+    console.log("[MainWebGL][drawScene][m4] > Multiplying...");
+    let X = 0;
+    let Y = 1;
+    let Z = 2;
+    this.objectSelected.matrix = this.objectSelected.m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+    this.objectSelected.matrix = this.objectSelected.m4.translate(this.objectSelected.matrix, this.objectSelected.translation[X], this.objectSelected.translation[Y], this.objectSelected.translation[Z]);
+    this.objectSelected.matrix = this.objectSelected.m4.xRotate(this.objectSelected.matrix, this.objectSelected.rotation[X]);
+    this.objectSelected.matrix = this.objectSelected.m4.yRotate(this.objectSelected.matrix, this.objectSelected.rotation[Y]);
+    this.objectSelected.matrix = this.objectSelected.m4.zRotate(this.objectSelected.matrix, this.objectSelected.rotation[Z]);
+    this.objectSelected.matrix = this.objectSelected.m4.scale(this.objectSelected.matrix, this.objectSelected.scale[X], this.objectSelected.scale[Y], this.objectSelected.scale[Z]);
 
-    //console.log("[drawScene][uniformMatrix4fv] > Setting...");
+    console.log("[MainWebGL][drawScene][uniformMatrix] > Running...");
     for (let index = 0; index < this.listObjects.length; index++) {
-
-      //console.log("[drawScene][uniform4fv] > Setting...");
       this.gl.uniform4fv(this.colorLocation, this.listObjects[index].color);
-
-      //console.log("Prints:", index);
       this.gl.uniformMatrix4fv(this.matrixLocation, false, this.listObjects[index].matrix);
-
-      //console.log("[drawScene][drawArrays] > Setting...");
-      var primitiveType = this.gl.TRIANGLES;
-      var offset = 0;
-      var count = 16 * 6;
-      this.gl.drawArrays(primitiveType, offset, count);
+      this.gl.drawArrays(this.gl.TRIANGLES, 0, 16 * 6);
     }
   }
 
-  updatePosition(index, main) {
-    //console.log("[updatePosition] > Success!");
+  updatePosition(index, mainWebGL) {
+    console.log("[MainWebGL][updatePosition] > Running...");
     return function (event, ui) {
-      main.listObjects[main.objectSelected].translation[index] = ui.value;
-      main.drawScene();
+      mainWebGL.objectSelected.translation[index] = ui.value;
+      mainWebGL.drawScene();
     };
   }
 
-  updateRotation(index, main) {
-    //console.log("[updateRotation] > Success!");
+  updateRotation(index, mainWebGL) {
+    console.log("[MainWebGL][updateRotation] > Running...");
     return function (event, ui) {
       var angleInDegrees = ui.value;
-      var angleInRadians = main.listObjects[main.objectSelected].degToRad(angleInDegrees);
-      main.listObjects[main.objectSelected].rotation[index] = angleInRadians;
-      main.drawScene();
+      var angleInRadians = mainWebGL.objectSelected.degToRad(angleInDegrees);
+      mainWebGL.objectSelected.rotation[index] = angleInRadians;
+      mainWebGL.drawScene();
     };
   }
 
-  updateScale(index, main) {
-    //console.log("[updateScale] > Success!");
+  updateScale(index, mainWebGL) {
+    console.log("[MainWebGL][updateScale] > Running...");
     return function (event, ui) {
-      main.listObjects[main.objectSelected].scale[index] = ui.value;
-      main.drawScene();
+      mainWebGL.objectSelected.scale[index] = ui.value;
+      mainWebGL.drawScene();
     };
   }
 
-  updateBezierQuadratic(main) {
-    //console.log("[updateBezierQuadratic] > Success!");
+  updateBezierQuadratic(mainWebGL) {
+    console.log("[MainWebGL][updatebezierQuadratic] > Running...");
 
     return function (event, ui) {
       var points = [
         {
-          "x": main.listObjects[main.objectSelected].translation[0],
-          "y": main.listObjects[main.objectSelected].translation[1],
+          "x": mainWebGL.objectSelected.translation[0],
+          "y": mainWebGL.objectSelected.translation[1],
         },
         {
           "x": 500,
@@ -768,19 +794,20 @@ class Main {
         },
       ];
       var T = ui.value;
-      main.listObjects[main.objectSelected].translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * main.listObjects[main.objectSelected].translation[0];
-      main.listObjects[main.objectSelected].translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * main.listObjects[main.objectSelected].translation[1];
-      main.drawScene();
+      mainWebGL.objectSelected.translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * mainWebGL.objectSelected.translation[0];
+      mainWebGL.objectSelected.translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * mainWebGL.objectSelected.translation[1];
+      mainWebGL.drawScene();
     };
   }
 
-  updateBezierCubic(main) {
-    //console.log("[updateBezierCubic] > Success!");
+  updateBezierCubic(mainWebGL) {
+    console.log("[MainWebGL][updateBezierCubic] > Running...");
+
     return function (event, ui) {
       var p = [
         {
-          "x": main.listObjects[main.objectSelected].translation[0],
-          "y": main.listObjects[main.objectSelected].translation[1],
+          "x": mainWebGL.objectSelected.translation[0],
+          "y": mainWebGL.objectSelected.translation[1],
         },
         {
           "x": 500,
@@ -796,9 +823,9 @@ class Main {
         },
       ];
       var t = ui.value;
-      main.listObjects[main.objectSelected].translation[0] = (1 - t) * (1 - t) * (1 - t) * main.listObjects[main.objectSelected].translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
-      main.listObjects[main.objectSelected].translation[1] = (1 - t) * (1 - t) * (1 - t) * main.listObjects[main.objectSelected].translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
-      main.drawScene();
+      mainWebGL.objectSelected.translation[0] = (1 - t) * (1 - t) * (1 - t) * mainWebGL.objectSelected.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
+      mainWebGL.objectSelected.translation[1] = (1 - t) * (1 - t) * (1 - t) * mainWebGL.objectSelected.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
+      mainWebGL.drawScene();
     };
   }
 
@@ -806,7 +833,7 @@ class Main {
 
 
 // Starting...
-main = new Main();
+mainWebGL = new MainWebGL();
 utils = new Utils();
 interfaceHTML = new InterfaceHTML();
-
+//camera = new Camera();
