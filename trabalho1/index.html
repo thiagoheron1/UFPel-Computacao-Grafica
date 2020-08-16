@@ -21,15 +21,6 @@
             position: relative;
         }
 
-        #text {
-            position: absolute;
-            left: 0px;
-            top: 0px;
-            z-index: -10;
-            width: 40vw;
-            height: 40vh;
-        }
-
     </style>
 
 </head>
@@ -38,13 +29,15 @@
     <!-- Canvas -->
     <div class="container">
         <canvas id="canvas">My Canvas</canvas>
-        <canvas id="text"></canvas>
     </div>
 
     <!-- Controllers -->
     <div id="uiContainer">
         <div id="ui">
-            <div id="cameraAngle"></div>
+            <div id="zoom"></div>
+            <div id="cameraX"></div>
+            <div id="cameraY"></div>
+            <div id="cameraZ"></div>
             <div id="bezierQuadratic"></div>
             <div id="bezierCubic"></div>
             <div id="x"></div>
@@ -58,7 +51,7 @@
             <div id="scaleZ"></div>
             <br><br><br>
             <form>
-                <select id="listOptions" onchange="main.selectObject(this.value)" size="8">
+                <select id="listOptions" onchange="webGL.selectObject(this.value)" size="8">
                     <option value="0" selected>0 - Object T</option>
                 </select>
                 <br>
@@ -66,8 +59,8 @@
             </form>
         </div>
     </div>
-    <button type="button" onclick="interfaceHTML.add()">Insert option</button>
-    <button type="button" onclick="interfaceHTML.remove();">Remove option</button>
+    <button type="button" onclick="webGL.addObject()">Insert option</button>
+    <button type="button" onclick="webGL.removeObject();">Remove option</button>
 </body>
 
 </html>
@@ -76,6 +69,5 @@
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
-
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
 <script type="text/javascript" src="script.js"></script>
