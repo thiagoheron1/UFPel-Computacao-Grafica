@@ -322,7 +322,7 @@ class Utils {
         return d * Math.PI / 180;
     }
 
-    ruleOfThree(maxValue, maxPercentage, minValue){
+    ruleOfThree(maxValue, maxPercentage, minValue) {
         return (minValue * maxPercentage) / maxValue;
     }
 };
@@ -345,7 +345,23 @@ class ObjectF {
 
 class Camera {
     constructor() {
-        console.log();
+        console.log("");
+    }
+
+    updateCameraPosition(index, webGL) {
+        //console.log("[WebGL][updatePosition] > Running...");
+        return function (event, ui) {
+            webGL.objectSelected.positionCamera[index] = ui.value;
+            webGL.drawScene();
+        };
+    }
+
+    updateCameraZoom(webGL) {
+        //console.log("[WebGL][updatePosition] > Running...");
+        return function (event, ui) {
+            webGL.objectSelected.zoom = ui.value;
+            webGL.drawScene();
+        };
     }
 }
 
@@ -877,6 +893,7 @@ class Interface {
 
 
 utils = new Utils();
+objCamera = new Camera();
 objWebGL = new WebGL();
 objInterface = new Interface(objWebGL);
 
@@ -930,8 +947,8 @@ function animation(now) {
                         "y": command.axisY2,
                     },
                 ];
-                var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
-                
+                var minPercentage = utils.ruleOfThree(maxValue = command.time, maxPercentage = 1.0, minValue = temp);
+
                 var T = minPercentage;
                 object.translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * object.translation[0];
                 object.translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * object.translation[1];
@@ -939,30 +956,30 @@ function animation(now) {
             } else if (command.type == "bezierCubic") {
                 var p = [
                     {
-                      "x": object.translation[0],
-                      "y": object.translation[1],
+                        "x": object.translation[0],
+                        "y": object.translation[1],
                     },
                     {
-                      "x": command.axisX1,
-                      "y": command.axisY1,
+                        "x": command.axisX1,
+                        "y": command.axisY1,
                     },
                     {
-                      "x": command.axisX2,
-                      "y": command.axisY2,
+                        "x": command.axisX2,
+                        "y": command.axisY2,
                     },
                     {
-                      "x": command.axisX3,
-                      "y": command.axisY3,
+                        "x": command.axisX3,
+                        "y": command.axisY3,
                     },
-                  ];
-                  
-                  var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
-                  
-                  var t = minPercentage;
-                  object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
-                  object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
+                ];
+
+                var minPercentage = utils.ruleOfThree(maxValue = command.time, maxPercentage = 1.0, minValue = temp);
+
+                var t = minPercentage;
+                object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
+                object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
             }
-            
+
             objWebGL.drawScene();
             requestAnimationFrame(animation);
 
@@ -1027,8 +1044,8 @@ function animationUnique(now) {
                         "y": command.axisY2,
                     },
                 ];
-                var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
-                
+                var minPercentage = utils.ruleOfThree(maxValue = command.time, maxPercentage = 1.0, minValue = temp);
+
                 var T = minPercentage;
                 object.translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * object.translation[0];
                 object.translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * object.translation[1];
@@ -1036,28 +1053,28 @@ function animationUnique(now) {
             } else if (command.type == "bezierCubic") {
                 var p = [
                     {
-                      "x": object.translation[0],
-                      "y": object.translation[1],
+                        "x": object.translation[0],
+                        "y": object.translation[1],
                     },
                     {
-                      "x": command.axisX1,
-                      "y": command.axisY1,
+                        "x": command.axisX1,
+                        "y": command.axisY1,
                     },
                     {
-                      "x": command.axisX2,
-                      "y": command.axisY2,
+                        "x": command.axisX2,
+                        "y": command.axisY2,
                     },
                     {
-                      "x": command.axisX3,
-                      "y": command.axisY3,
+                        "x": command.axisX3,
+                        "y": command.axisY3,
                     },
-                  ];
-                  
-                  var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
-                  
-                  var t = minPercentage;
-                  object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
-                  object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
+                ];
+
+                var minPercentage = utils.ruleOfThree(maxValue = command.time, maxPercentage = 1.0, minValue = temp);
+
+                var t = minPercentage;
+                object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
+                object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
             }
 
             objWebGL.drawScene();
@@ -1072,3 +1089,8 @@ function animationUnique(now) {
     }
 };
 
+
+webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objCamera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objCamera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: objCamera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#zoom", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });

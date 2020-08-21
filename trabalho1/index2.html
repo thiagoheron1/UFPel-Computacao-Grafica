@@ -11,7 +11,7 @@
 
         <!-- Canvas -->
         <div style=" margin-bottom: 2%; border-bottom: 5px solid rgb(33, 33, 185);">
-            <canvas id="canvas" width="2000px" height="500px"></canvas>
+            <canvas id="canvas" width="1500px" height="500px"></canvas>
         </div>
 
         <!-- Menus -->
@@ -96,10 +96,10 @@
 
 
             <!-- Menu Center> -->
-            <div style="flex-grow:4;">
+            <div style="flex-grow:10;">
 
                 <div style="display:flex; flex-direction:row; ">
-                    <div style="flex-grow: 11;">
+                    <div style="flex-grow: 8;">
                         <select style="width:90%; margin-left:5%" id="listCommands" size="15">
                         </select>
 
@@ -131,8 +131,28 @@
 
 
             <!-- Menu Right - Camera -->
-            <div style="flex-grow:4;background-color: yellowgreen;">
-                Camera
+            <div style="flex-grow:1;">
+                
+                <div id="uiContainer">
+                    <!-- Select Type of Camera -->
+                    <select class="menuSelect" style="width:100px;">
+                        <option value="0" selected>Projection</option>
+                        <option value="1">Perspective</option>
+                        <option value="2">LookAt</option>
+                        <option value="3">Follow Object</option>
+                    </select>
+        
+                    <!-- Menu of Camera -->
+                    <div id="ui">
+                        <div id="zoom"></div>
+                        <div id="cameraX"></div>
+                        <div id="cameraY"></div>
+                        <div id="cameraZ"></div>
+                        <div id="bezierQuadratic"></div>
+                        <div id="bezierCubic"></div>
+                    </div>
+                </div>
+
             </div>
 
 
