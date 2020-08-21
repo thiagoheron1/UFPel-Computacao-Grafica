@@ -365,9 +365,9 @@ class Camera {
         if (typeCamera == "projection") {
             return this.calculateProjection();
         } else if (typeCamera == "perspective") {
-            return this.calculatePerspective();
+            return this.calculatePerspectiveOrLookAt(true);
         } else if (typeCamera == "lookAt") {
-            console.log("Camera LookAt");
+            return this.calculatePerspectiveOrLookAt(false);
         } else if (typeCamera == "followObject") {
             console.log("Camera FollowObject");
         } else {
@@ -380,18 +380,49 @@ class Camera {
         return utils.m4.projection(this.canvasWidth, this.canvasHeight, this.canvasDepth);
     }
 
-    calculatePerspective() {
-        this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
-        let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
-        var cameraMatrix = utils.m4.lookAt(this.positionCamera, this.target, this.up, utils.m4);
+
+
+    calculatePerspectiveOrLookAt(perspective) {
+        
+        // LookAt o meu positionCamera recebe Sliders
+        // Perspectiva o positionCamera é fixo.
+
+
+        if (perspective){
+            var perspectiveCamera = [0, 0, -200];
+            var cameraMatrix = utils.m4.lookAt(perspectiveCamera, this.target, this.up, utils.m4);
+            
+        } else {
+            console.log(this.positionCamera);
+            var lookAtCamera = [this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]]
+            var cameraMatrix = utils.m4.lookAt(lookAtCamera, this.target, this.up, utils.m4);
+        }
+
+        let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
+        //worldMatrix = utils.m4.yRotation(utils.degToRad(0));
 
         
-        let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
-        worldMatrix = utils.m4.yRotation(utils.degToRad(0));
-        worldMatrix = utils.m4.zRotation(utils.degToRad(180));
+        if (perspective){
+            console.log("[Camera][Perspective] > Perspective...");
+            worldMatrix = utils.m4.zRotation(utils.degToRad(180));
+            worldMatrix = utils.m4.translate(worldMatrix, 0, 0, 200);
+        
+            worldMatrix = utils.m4.translate(worldMatrix, 35, -75, -5);
+            worldMatrix = utils.m4.translate(worldMatrix, this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]);
+        } else{ 
+            console.log("[Camera][Perspective] > LookAt...");
+            worldMatrix = utils.m4.zRotation(utils.degToRad(180));
+            
 
+        }
+
+
+        
+        
         var viewMatrix = utils.m4.inverse(cameraMatrix);
         let matrix = []
+        this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
+        let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
         matrix = utils.m4.multiply(perspectiveMatrix, viewMatrix);
         matrix = utils.m4.multiply(matrix, worldMatrix);
         return matrix;
@@ -1160,7 +1191,7 @@ function animationUnique(now) {
 
 webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
 webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZoom", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraZ", { value: -200, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraZoom", { value: 100, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
