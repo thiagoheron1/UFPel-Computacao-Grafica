@@ -333,12 +333,14 @@ class ObjectF {
         this.scale = [-1, 1, 1];
 
         this.color = [Math.random(), Math.random(), Math.random(), 1];
+
+        this.listCommands = [];
     }
 };
 
 
 class Camera {
-    constructor(){
+    constructor() {
         console.log();
     }
 }
@@ -384,7 +386,8 @@ class WebGL {
         this.setConfigsBuffer();
 
         this.listObjects = [new ObjectF(0, 0, 0)];
-        this.currentObject = this.listObjects[0];
+        this.indexObject = 0;
+        this.listCommands = [];
 
         // runAllCommands
         this.drawScene();
@@ -647,9 +650,93 @@ class WebGL {
 
 class Interface {
     constructor(objWebGL) {
-        this.index = 0;
-        this.listCommands = [];
         this.webGL = objWebGL;
+        this.indexInterface = 1;
+    }
+
+
+    // Buttons Add Object
+    buttonAddObject() {
+        //console.log("[Interface][buttonAddObject]");
+
+        // Add Object to WebGL
+        this.webGL.listObjects.push(new ObjectF(0, 0, 0));
+        this.webGL.drawScene();
+
+
+        // Add Object to a Select Interface
+        let selectObjectHTML = document.getElementById('selectObject');
+
+        let option = document.createElement('option');
+        this.indexInterface += 1;
+        let name = "Object " + String(this.indexInterface);
+        option.appendChild(document.createTextNode(name));
+        option.value = "Object-"+String(this.webGL.listObjects.length)
+        selectObjectHTML.appendChild(option);
+    }
+
+    buttonRemoveObject() {
+        //console.log("[Interface][buttonRemoveObject]");
+
+        // Get Current Selected
+        let selectObjectHTML = document.getElementById("selectObject");
+        let currentIndex = selectObjectHTML.selectedIndex;
+        //console.log("Index:", currentIndex)
+
+        // Remove Object from WebGL
+        this.webGL.listObjects.splice(currentIndex, 1);
+        this.webGL.drawScene();
+
+        // Remove Object from Select Interface
+        selectObjectHTML.remove(currentIndex);
+
+    }
+
+    // Buttons Add Commands
+    buttonAddCommand() {
+        //console.log("[Interface][buttonAddCommand]");
+        
+        // Create Command By Input
+        let command = this.createCommand();
+
+        // Add Command to Unique Object
+        objWebGL.listCommands.push(command);
+
+        // Add Command to a Select Interface
+        let selectCommandHTML = document.getElementById('listCommands');
+        let name = command["nameObject"] + " = " + command['type'][0].toUpperCase() + ", " + command['axisX'] + ", " + command['axisY'] + ", " + command['axisZ'] + ", " + command['time'];
+
+        let option = document.createElement('option');
+        option.appendChild(document.createTextNode(name));
+        option.value = listCommands.length;
+        selectCommandHTML.appendChild(option);
+
+        // Clear Inputs
+        this.clearCommand();
+    }
+    
+    buttonRemoveCommand() {
+        console.log("[Interface][buttonRemoveCommand]");
+    }
+
+    buttonRunAllCommands() {
+        //console.log("[Interface][runAllCommands] > Running...");
+        //console.log(this.listCommands);
+    
+        requestAnimationFrame(animation);
+
+    }
+
+
+    // Buttons Utils
+    getCurrentIndexObject(){
+        //console.log("[Interface][getCurrentIndexObject]");
+        let selectObjectHTML = document.getElementById("selectObject");
+        let currentIndex = selectObjectHTML.selectedIndex;
+
+        // Seta o objeto atual pelo index.
+        //console.log("index", currentIndex);
+        return currentIndex;
     }
 
     createCommand() {
@@ -660,7 +747,9 @@ class Interface {
         let time = Number(document.getElementById('time').value);
 
         const command = {
-            type: String(document.getElementById("menuSelect").value),
+            nameObject: String(document.getElementById("selectObject").value),
+            idObject: this.getCurrentIndexObject(),
+            type: String(document.getElementById("menuCommands").value),
             axisX: axisX,
             axisY: axisY,
             axisZ: axisZ,
@@ -680,88 +769,28 @@ class Interface {
 
     }
 
+    clearCommand() {
+        //console.log("[Interface][clearCommand] > Running...");
+        document.getElementById('axisX').value = 0
+        document.getElementById('axisY').value = 0
+        document.getElementById('axisZ').value = 0
+        document.getElementById('time').value = 2
+    }
+
+    // Buttons Calculates Speed
+
     calculateTranslationSpeed(axis, time) {
-        return Number(axis)/Number(time);
+        return Number(axis) / Number(time);
 
     }
 
     calculateRotationSpeed(axis, time) {
-        let x = (1.2*time *axis) / 360
-        return x/time;
+        let x = (1.2 * time * axis) / 360
+        return x / time;
     }
 
     calculateScaleSpeed(axis, time) {
-        return Number(axis)/Number(time);
-    }
-
-    buttonAdd() {
-        let command = this.createCommand();
-        this.addCommand(command);
-        this.addToSelectHTML(command);
-        this.clearCommand();
-    }
-
-    addCommand() {
-        //console.log("[Interface][addCommand] > Running...");
-
-        this.listCommands.push(this.createCommand());
-    }
-
-    removeCommand(index) {
-        //console.log("[Interface][removeCommand] > Running...");
-
-        var listOptions = document.getElementById("listOptions");
-        var indexOption = listOptions.options[listOptions.selectedIndex].value;
-
-        listOptions.removeChild(listOptions.options[indexOption]);
-
-        main.removeObject(indexOption);
-
-        listOptions.selectedIndex = String(indexOption - 1);
-
-        this.listObjects.splice(index);
-        this.drawAllObjects();
-    }
-
-    addToSelectHTML(command) {
-        //console.log("[Interface][updateSelectCommands] > Running...");
-
-        let selectHTML = document.getElementById('listCommands');
-        let name = "(" + command['type'][0].toUpperCase() + ", " + command['axisX'] + ", " + command['axisY'] + ", " + command['axisZ'] + ", " + command['time'] + ")"
-
-        let option = document.createElement('option');
-        option.appendChild(document.createTextNode(name));
-        option.value = listCommands.length;
-
-        selectHTML.appendChild(option);
-    }
-
-    removeToSelectHTML(command) {
-        //console.log("");
-    }
-
-    clearCommand() {
-        //console.log("[Interface][clearCommand] > Running...");
-        document.getElementById('axisX').value = 150
-        document.getElementById('axisY').value = 0
-        document.getElementById('axisZ').value = 0
-        document.getElementById('time').value = 3
-    }
-
-    runAllCommands() {
-        //console.log("[Interface][runAllCommands] > Running...");
-        //console.log(this.listCommands);
-        this.index = 0;
-        requestAnimationFrame(animation);
-
-    }
-
-    showListCommands() {
-        //console.log("List Commands: ", this.listCommands);
-    }
-
-    getCommand(index) {
-        return this.listCommands[index];
+        return Number(axis) / Number(time);
     }
 };
 
@@ -779,17 +808,18 @@ function animation(now) {
     now *= 0.001;
     var deltaTime = now - then;
     temp = temp + deltaTime;
+
+    var command = objWebGL.listCommands[objWebGL.indexObject]
+    var object = objWebGL.getObject(command.idObject);
     
-    var command = objInterface.getCommand(objInterface.index);
-    var object = objWebGL.getObject(0);
-    
+
     if (then == 0) {
         then = now;
         temp = 0;
         requestAnimationFrame(animation);
     } else {
         then = now;
-
+        console.log(temp, "<", command.time)
         if (temp < command.time) {
             if (command.type == "translation") {
                 object.translation[0] += command.translationSpeedX * deltaTime;
@@ -812,27 +842,18 @@ function animation(now) {
             }
             objWebGL.drawScene();
             requestAnimationFrame(animation);
-            
-        } else if (objInterface.index != objInterface.listCommands.length - 1) {
-            objInterface.index += 1;
+
+        } else if (objWebGL.indexObject != objWebGL.listCommands.length - 1) {
+            objWebGL.indexObject += 1;
             temp = 0;
             then = 0;
             requestAnimationFrame(animation);
         } else {
-            objInterface.index = 0;
+            objWebGL.indexObject = 0;
             temp = 0;
             then = 0;
             return;
         }
     }
 };
-
-
-// Sliders
-webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: webGL.updateCameraPosition(0, webGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: webGL.updateCameraPosition(1, webGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: webGL.updateCameraPosition(2, webGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#zoom", { value: 0, slide: webGL.updateCameraZoom(webGL), min: 0, max: 180 });
-
-
 

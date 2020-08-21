@@ -2,72 +2,87 @@
 <html>
 
 <head>
-
-    <style type="text/css">
-        @import url("https://webgl2fundamentals.org/webgl/resources/webgl-tutorials.css");
-        html,
-        body {
-            margin: 0px;
-            margin-left: 25px;
-        }
-
-        canvas {
-            display: block;
-            width: 40vw;
-            height: 40vh;
-        }
-
-        .container {
-            position: relative;
-        }
-
-    </style>
-
+    <link rel="stylesheet" type="text/css" href="index.css">
 </head>
 
 <body>
-    <!-- Canvas -->
-    <div class="container">
-        <canvas id="canvas">My Canvas</canvas>
-    </div>
 
-    <!-- Controllers -->
-    <div id="uiContainer">
-        <div id="ui">
-            <div id="zoom"></div>
-            <div id="cameraX"></div>
-            <div id="cameraY"></div>
-            <div id="cameraZ"></div>
-            <div id="bezierQuadratic"></div>
-            <div id="bezierCubic"></div>
-            <div id="x"></div>
-            <div id="y"></div>
-            <div id="z"></div>
-            <div id="rotationX"></div>
-            <div id="rotationY"></div>
-            <div id="rotationZ"></div>
-            <div id="scaleX"></div>
-            <div id="scaleY"></div>
-            <div id="scaleZ"></div>
-            <br><br><br>
-            <form>
-                <select id="listOptions" onchange="webGL.selectObject(this.value)" size="8">
-                    <option value="0" selected>0 - Object T</option>
+    <div class="flex-container">
+
+        <!-- Items -->
+        <div class="menu ">
+
+            <!-- Select Type of Transformation -->
+            <select id="menuSelect">
+                <option value="translation">Translation</option>
+                <option value="rotation">Rotation</option>
+                <option value="scale">Scale</option>
+                <option value="bezierQuadratic">Bezier Quadratic</option>
+                <option value="bezierCubic">Bezier Cubic</option>
+                <option value="objectF">New Object F</option>
+                <option value="objectT">New Object T</option>
+            </select>
+            <br />
+
+            <!-- Inputs: Axis X, Y, Z-->
+            <span class="labels">x: </span> <input type="number" id="axisX" class="inputsAxis" min="150" max="360" value="150"> <br />
+            <span class="labels">y: </span> <input type="number" id="axisY" class="inputsAxis" min="0" max="360" value="0"> <br />
+            <span class="labels">z: </span> <input type="number" id="axisZ" class="inputsAxis" min="0" max="360" value="0"> <br />
+            <span class="labels">Time: </span> <input type="number" id="time" class="inputsAxis" min="0" max="360" value="3"> <br />
+  
+
+            <!-- List of Transformations-->
+            <div class="flex-container">
+
+                <select id="listCommands" onchange="objInterface.changeObject(this.value);" size="8">
                 </select>
-                <br>
 
-            </form>
+                <div styles="flex-container-column">
+                    <div class="menuButton add" onclick="objInterface.buttonAddCommand()"><h3>Add</h3></div>
+                    <div class="menuButton remove"><h3>Remove</h3></div>
+                    <div class="menuButton play" onclick="objInterface.runAllCommands()"><h3>Play</h3></div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!-- Canvas -->
+        <div>
+            <canvas id="canvas" width="1000px" height="1000px"></canvas>
+        </div>
+
+        <!-- Controllers -->
+        <div id="uiContainer">
+
+            <!-- Select Type of Camera -->
+            <select id="menuSelect" onclick="console.log(this.value)">
+                <option value="0" selected>LookAt</option>
+                <option value="1" selected>Axis</option>
+            </select>
+
+            <!-- Menu of Camera -->
+            <div id="ui">
+                <div id="zoom"></div>
+                <div id="cameraX"></div>
+                <div id="cameraY"></div>
+                <div id="cameraZ"></div>
+                <div id="bezierQuadratic"></div>
+                <div id="bezierCubic"></div>
+            </div>
         </div>
     </div>
-    <button type="button" onclick="webGL.addObject()">Insert option</button>
-    <button type="button" onclick="webGL.removeObject();">Remove option</button>
+
+
+
 </body>
 
 </html>
+
 
 <!-- Scripts -->
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
 <script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
-<script type="text/javascript" src="script.js"></script>
+<script async type="text/javascript" src="new_script.js"></script>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="index2.css">
+</head>
+
+<body>
+
+    <div style="display:flex; flex-direction: column;">
+
+        <!-- Canvas -->
+        <div style=" margin-bottom: 2%; border-bottom: 5px solid rgb(33, 33, 185);">
+            <canvas id="canvas" width="2000px" height="500px"></canvas>
+        </div>
+
+        <!-- Menus -->
+        <div style="display:flex;">
+
+
+
+
+
+
+
+
+
+            <!-- Menu Left - Objects-->
+            <div style="flex-grow:1;">
+
+                <!-- Select Object -->
+                <select onchange="objInterface.getCurrentIndexObject()" id="selectObject" class="menuSelect">
+                    <option value="Object-1">Object 1</option>
+                </select>
+
+                <button onclick="objInterface.buttonAddObject()" type="button" class="button bg-green font-white">+</button>
+                <button onclick="objInterface.buttonRemoveObject()" type="button" class="button bg-red font-white">-</button>
+
+
+                <!-- Select Command -->
+                <div style="flex-grow: 4;">
+                    <select id="menuCommands" class="menuSelect">
+                        <option value="translation">Translation</option>
+                        <option value="rotation">Rotation</option>
+                        <option value="scale">Scale</option>
+                        <option value="bezierQuadratic">Bezier Quadratic</option>
+                        <option value="bezierCubic">Bezier Cubic</option>
+                    </select>
+                </div>
+
+                <!-- Inputs -->
+                <div style="flex-grow: 4; text-align:center">
+                    <div>
+
+                        <span class="input-label">X: </span> <input type="number" id="axisX" class="input-text"
+                            min="150" max="360" value="150">
+                        <span class="input-label">Y: </span> <input type="number" id="axisY" class="input-text" min="0"
+                            max="360" value="0">
+                        <span class="input-label">Z: </span> <input type="number" id="axisZ" class="input-text" min="0"
+                            max="360" value="0">
+                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text"
+                            min="0" max="360" value="1">
+                    </div>
+                    
+                    <br/> <br/>
+                    
+                    <div style="display:none">
+                        <span class="input-label">X: </span> <input type="number" id="axisX" class="input-text"
+                            min="150" max="360" value="150">
+                        <span class="input-label">X: </span> <input type="number" id="axisY" class="input-text" min="0"
+                            max="360" value="0">
+                        <span class="input-label">Z: </span> <input type="number" id="axisZ" class="input-text" min="0"
+                            max="360" value="0">
+                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text"
+                            min="0" max="360" value="1">
+                    </div>
+                </div>
+                <br /><br />
+                <button onclick="objInterface.buttonAddCommand()" type="button" class="button bg-green font-white"
+                    style="width:90%; margin-left:5%"> Add </button>
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- Menu Center> -->
+            <div style="flex-grow:4;">
+
+                <div style="display:flex; flex-direction:row; ">
+                    <div style="flex-grow: 11;">
+                        <select style="width:90%; margin-left:5%" id="listCommands"
+                            onchange="objInterface.changeObject(this.value);" size="15">
+                        </select>
+
+                    </div>
+                    <div style="display:flex; flex-direction:column; flex-grow: 1;">
+                        <!-- <button type="button" class="buttonList"> Run </button>-->
+                        <button onclick="objInterface.buttonRunAllCommands()" type="button" class="buttonList"> Run All
+                        </button>
+                        <!-- <button type="button" class="buttonList"> Remove </button>-->
+                        <!-- <button type="button" class="buttonList"> Remove All </button>-->
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <!-- Menu Right - Camera -->
+            <div style="flex-grow:4;background-color: yellowgreen;">
+                Camera
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+</body>
+
+</html>
+
+
+<!-- Scripts -->
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-utils.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/webgl-lessons-ui.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/twgl-full.min.js"></script>
+<script type="text/javascript" src="https://webgl2fundamentals.org/webgl/resources/flattened-primitives.js"></script>
+<script async type="text/javascript" src="new_script2.js"></script>
