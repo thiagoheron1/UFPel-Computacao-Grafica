@@ -1093,4 +1093,6 @@ function animationUnique(now) {
 webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objCamera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
 webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objCamera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
 webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: objCamera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#zoom", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraZoom", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
