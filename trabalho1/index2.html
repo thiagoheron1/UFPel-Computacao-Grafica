@@ -29,7 +29,7 @@
             <div style="flex-grow:1;">
 
                 <!-- Select Object -->
-                <select onchange="objInterface.getCurrentIndexObject()" id="selectObject" class="menuSelect">
+                <select onchange="objInterface.changeIndexObject()" id="selectObject" class="menuSelect">
                     <option value="Object-1">Object 1</option>
                 </select>
 
@@ -126,11 +126,11 @@
                 
                 <div id="uiContainer">
                     <!-- Select Type of Camera -->
-                    <select class="menuSelect" style="width:100px;">
-                        <option value="0" selected>Projection</option>
-                        <option value="1">Perspective</option>
-                        <option value="2">LookAt</option>
-                        <option value="3">Follow Object</option>
+                    <select onchange="objInterface.changeNameCamera()" id="selectCamera" class="menuSelect" style="width:100px;">
+                        <option value="projection" selected>Projection</option>
+                        <option value="perspective">Perspective</option>
+                        <option value="lookAt">LookAt</option>
+                        <option value="followObject">Follow Object</option>
                     </select>
         
                     <!-- Menu of Camera -->
