@@ -388,6 +388,7 @@ class WebGL {
         this.listObjects = [new ObjectF(0, 0, 0)];
         this.indexObject = 0;
         this.listCommands = [];
+        this.runCommand = 0;
 
         // runAllCommands
         this.drawScene();
@@ -715,10 +716,6 @@ class Interface {
         this.clearCommand();
     }
     
-    buttonRemoveCommand() {
-        console.log("[Interface][buttonRemoveCommand]");
-    }
-
     buttonRunAllCommands() {
         //console.log("[Interface][runAllCommands] > Running...");
         //console.log(this.listCommands);
@@ -727,6 +724,43 @@ class Interface {
 
     }
 
+    buttonRunCommand(){
+        let selectCommandsHTML = document.getElementById("listCommands");
+        let commandIndex = selectCommandsHTML.selectedIndex;
+
+
+        this.webGL.runCommand = commandIndex;
+        console.log(this.webGL.runCommand)
+        requestAnimationFrame(animationUnique);
+    }
+
+    buttonClearCommands() {
+        // Clear List Commands of WebGL
+        objWebGL.listCommands = [];
+
+        // Clear Select Interface
+        let selectCommandsHTML = document.getElementById("listCommands");
+        console.log(selectCommandsHTML);
+
+        var length = selectCommandsHTML.options.length;
+        for (let i = length-1; i >= 0; i--) {
+            selectCommandsHTML.options[i] = null;
+        }
+    }
+
+    buttonRemoveCommand(){
+        
+        // Get Index Selected
+        let selectCommandsHTML = document.getElementById("listCommands");
+        let currentIndex = selectCommandsHTML.selectedIndex;
+
+        // Remove Selected Command
+        objWebGL.listCommands.splice(currentIndex, 1);
+
+        selectCommandsHTML.options[currentIndex] = null;
+        
+
+    }
 
     // Buttons Utils
     getCurrentIndexObject(){
@@ -761,8 +795,8 @@ class Interface {
             rotationSpeedY: this.calculateRotationSpeed(axisY, time),
             rotationSpeedZ: this.calculateRotationSpeed(axisZ, time),
             scaleSpeedX: this.calculateScaleSpeed(axisX, time),
-            scaleSpeedY: this.calculateScaleSpeed(axisX, time),
-            scaleSpeedZ: this.calculateScaleSpeed(axisX, time)
+            scaleSpeedY: this.calculateScaleSpeed(axisY, time),
+            scaleSpeedZ: this.calculateScaleSpeed(axisZ, time)
 
         }
         return command;
@@ -819,7 +853,7 @@ function animation(now) {
         requestAnimationFrame(animation);
     } else {
         then = now;
-        console.log(temp, "<", command.time)
+
         if (temp < command.time) {
             if (command.type == "translation") {
                 object.translation[0] += command.translationSpeedX * deltaTime;
@@ -830,6 +864,7 @@ function animation(now) {
                 object.rotation[1] += command.rotationSpeedY * deltaTime;
                 object.rotation[2] += command.rotationSpeedZ * deltaTime;
             } else if (command.type == "scale") {
+                
                 object.scale[0] += command.scaleSpeedX * deltaTime;
                 object.scale[1] += command.scaleSpeedY * deltaTime;
                 object.scale[2] += command.scaleSpeedZ * deltaTime;
@@ -837,8 +872,6 @@ function animation(now) {
                 //console.log("");
             } else if (command.type == "bezierCubic") {
                 //console.log("");
-            } else if (command.type == "objectF") {
-                objWebGL.listObjects.push(new ObjectF(command.axisX, command.axisY, command.axisZ));
             }
             objWebGL.drawScene();
             requestAnimationFrame(animation);
@@ -849,6 +882,55 @@ function animation(now) {
             then = 0;
             requestAnimationFrame(animation);
         } else {
+            objWebGL.indexObject = 0;
+            temp = 0;
+            then = 0;
+            return;
+        }
+    }
+};
+
+function animationUnique(now) {
+
+    now *= 0.001;
+    var deltaTime = now - then;
+    temp = temp + deltaTime;
+
+    var command = objWebGL.listCommands[objWebGL.runCommand];
+    
+    var object = objWebGL.getObject(command.idObject);
+    console.log(object);
+
+    if (then == 0) {
+        then = now;
+        temp = 0;
+        requestAnimationFrame(animationUnique);
+    } else {
+        then = now;
+
+        if (temp < command.time) {
+            if (command.type == "translation") {
+                object.translation[0] += command.translationSpeedX * deltaTime;
+                object.translation[1] += command.translationSpeedY * deltaTime;
+                object.translation[2] += command.translationSpeedZ * deltaTime;
+            } else if (command.type == "rotation") {
+                object.rotation[0] += command.rotationSpeedX * deltaTime;
+                object.rotation[1] += command.rotationSpeedY * deltaTime;
+                object.rotation[2] += command.rotationSpeedZ * deltaTime;
+            } else if (command.type == "scale") {
+                
+                object.scale[0] += command.scaleSpeedX * deltaTime;
+                object.scale[1] += command.scaleSpeedY * deltaTime;
+                object.scale[2] += command.scaleSpeedZ * deltaTime;
+            } else if (command.type == "bezierQuadratic") {
+                //console.log("");
+            } else if (command.type == "bezierCubic") {
+                //console.log("");
+            }
+            objWebGL.drawScene();
+            requestAnimationFrame(animationUnique);
+
+        } else{
             objWebGL.indexObject = 0;
             temp = 0;
             then = 0;

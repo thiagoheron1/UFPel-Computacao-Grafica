@@ -34,7 +34,7 @@
                 </select>
 
                 <button onclick="objInterface.buttonAddObject()" type="button" class="button bg-green font-white">+</button>
-                <button onclick="objInterface.buttonRemoveObject()" type="button" class="button bg-red font-white">-</button>
+                <!--<button onclick="objInterface.buttonRemoveObject()" type="button" class="button bg-red font-white">-</button>-->
 
 
                 <!-- Select Command -->
@@ -98,17 +98,16 @@
 
                 <div style="display:flex; flex-direction:row; ">
                     <div style="flex-grow: 11;">
-                        <select style="width:90%; margin-left:5%" id="listCommands"
-                            onchange="objInterface.changeObject(this.value);" size="15">
+                        <select style="width:90%; margin-left:5%" id="listCommands" size="15">
                         </select>
 
                     </div>
                     <div style="display:flex; flex-direction:column; flex-grow: 1;">
                         <!-- <button type="button" class="buttonList"> Run </button>-->
-                        <button onclick="objInterface.buttonRunAllCommands()" type="button" class="buttonList"> Run All
-                        </button>
-                        <!-- <button type="button" class="buttonList"> Remove </button>-->
-                        <!-- <button type="button" class="buttonList"> Remove All </button>-->
+                        <button onclick="objInterface.buttonRunAllCommands()" type="button" class="buttonList"> Run All</button>
+                        <button onclick="objInterface.buttonRunCommand()" type="button" class="buttonList"> Run </button>
+                        <button onclick="objInterface.buttonRemoveCommand()" type="button" class="buttonList"> Remove </button>
+                        <button onclick="objInterface.buttonClearCommands()" type="button" class="buttonList"> Clear </button>
                     </div>
                 </div>
             </div>
