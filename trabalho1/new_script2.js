@@ -344,14 +344,64 @@ class ObjectF {
 
 
 class Camera {
-    constructor() {
-        console.log("");
+    constructor(width, height, depth) {
+
+        this.canvasWidth = width;
+        this.canvasHeight = height;
+        this.canvasDepth = depth;
+
+        this.aspect = this.canvasWidth / this.canvasHeight;
+        this.zNear = 0;
+        this.zFar = 2000;
+        this.target = [0, 0, 0];
+        this.up = [0, 1, 0];
+
+        this.positionCamera = [0, 0, -200];
+        this.zoom = 100;
+
+    }
+
+    selectCamera(typeCamera) {
+        if (typeCamera == "projection") {
+            return this.calculateProjection();
+        } else if (typeCamera == "perspective") {
+            return this.calculatePerspective();
+        } else if (typeCamera == "lookAt") {
+            console.log("Camera LookAt");
+        } else if (typeCamera == "followObject") {
+            console.log("Camera FollowObject");
+        } else {
+            console.log("Undefined Camera");
+        }
+    }
+
+    calculateProjection() {
+        console.log("[Camera][Projection] > Running...");
+        return utils.m4.projection(this.canvasWidth, this.canvasHeight, this.canvasDepth);
+    }
+
+    calculatePerspective() {
+        this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
+        let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
+        var cameraMatrix = utils.m4.lookAt(this.positionCamera, this.target, this.up, utils.m4);
+
+        
+        let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
+        worldMatrix = utils.m4.yRotation(utils.degToRad(0));
+        worldMatrix = utils.m4.zRotation(utils.degToRad(180));
+
+        var viewMatrix = utils.m4.inverse(cameraMatrix);
+        let matrix = []
+        matrix = utils.m4.multiply(perspectiveMatrix, viewMatrix);
+        matrix = utils.m4.multiply(matrix, worldMatrix);
+        return matrix;
+
     }
 
     updateCameraPosition(index, webGL) {
         //console.log("[WebGL][updatePosition] > Running...");
         return function (event, ui) {
-            webGL.objectSelected.positionCamera[index] = ui.value;
+            webGL.camera.positionCamera[index] = ui.value;
             webGL.drawScene();
         };
     }
@@ -359,7 +409,7 @@ class Camera {
     updateCameraZoom(webGL) {
         //console.log("[WebGL][updatePosition] > Running...");
         return function (event, ui) {
-            webGL.objectSelected.zoom = ui.value;
+            webGL.camera.zoom = ui.value;
             webGL.drawScene();
         };
     }
@@ -405,10 +455,15 @@ class WebGL {
         this.vao = this.createVertexArrayObject();
         this.setConfigsBuffer();
 
+        // Objects and Commands
         this.listObjects = [new ObjectF(0, 0, 0)];
         this.indexObject = 0;
         this.listCommands = [];
         this.runCommand = 0;
+
+        // Camera
+        this.camera = new Camera(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+        this.currentCamera = "projection"
 
         // runAllCommands
         this.drawScene();
@@ -647,7 +702,8 @@ class WebGL {
         let Y = 1;
         let Z = 2;
 
-        object.matrix = utils.m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+        //object.matrix = utils.m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
+        object.matrix = this.camera.selectCamera(this.currentCamera);
         object.matrix = utils.m4.translate(object.matrix, object.translation[X], object.translation[Y], object.translation[Z]);
         object.matrix = utils.m4.xRotate(object.matrix, object.rotation[X]);
         object.matrix = utils.m4.yRotate(object.matrix, object.rotation[Y]);
@@ -783,8 +839,8 @@ class Interface {
     }
 
     // Buttons Utils
-    getCurrentIndexObject() {
-        //console.log("[Interface][getCurrentIndexObject]");
+    changeIndexObject() {
+        //console.log("[Interface][changeIndexObject]");
         let selectObjectHTML = document.getElementById("selectObject");
         let currentIndex = selectObjectHTML.selectedIndex;
 
@@ -812,7 +868,7 @@ class Interface {
 
         const command = {
             nameObject: String(document.getElementById("selectObject").value),
-            idObject: this.getCurrentIndexObject(),
+            idObject: this.changeIndexObject(),
             type: String(document.getElementById("menuCommands").value),
             axisX1: axisX1,
             axisY1: axisY1,
@@ -850,6 +906,19 @@ class Interface {
         document.getElementById('axisY1').value = 0
         document.getElementById('axisZ1').value = 0
         document.getElementById('time').value = 2
+    }
+
+    changeNameCamera() {
+        //console.log("[Interface][changeIndexObject]");
+        let selectObjectHTML = document.getElementById("selectCamera");
+        let nameCamera = selectObjectHTML[selectObjectHTML.selectedIndex].value;
+
+        // Seta o nameCamera atual pelo index.
+        console.log(nameCamera);
+        objWebGL.currentCamera = nameCamera;
+        objWebGL.drawScene();
+        return nameCamera;
+
     }
 
     // Buttons Calculates Speed
@@ -893,7 +962,6 @@ class Interface {
 
 
 utils = new Utils();
-objCamera = new Camera();
 objWebGL = new WebGL();
 objInterface = new Interface(objWebGL);
 
@@ -1090,9 +1158,9 @@ function animationUnique(now) {
 };
 
 
-webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objCamera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objCamera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: objCamera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZoom", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
-webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
-webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objCamera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraZ", { value: 0, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraZoom", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
