@@ -39,7 +39,7 @@
 
                 <!-- Select Command -->
                 <div style="flex-grow: 4;">
-                    <select id="menuCommands" class="menuSelect">
+                    <select onchange="objInterface.isBezier(this.value)" id="menuCommands" class="menuSelect">
                         <option value="translation">Translation</option>
                         <option value="rotation">Rotation</option>
                         <option value="scale">Scale</option>
@@ -52,11 +52,11 @@
                 <div style="flex-grow: 4; text-align:center">
                     <div>
 
-                        <span class="input-label">X: </span> <input type="number" id="axisX" class="input-text"
+                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text"
                             min="150" max="360" value="150">
-                        <span class="input-label">Y: </span> <input type="number" id="axisY" class="input-text" min="0"
+                        <span class="input-label">Y: </span> <input type="number" id="axisY1" class="input-text" min="0"
                             max="360" value="0">
-                        <span class="input-label">Z: </span> <input type="number" id="axisZ" class="input-text" min="0"
+                        <span class="input-label">Z: </span> <input type="number" id="axisZ1" class="input-text" min="0"
                             max="360" value="0">
                         <span class="input-label">Time: </span> <input type="number" id="time" class="input-text"
                             min="0" max="360" value="1">
@@ -64,31 +64,33 @@
                     
                     <br/> <br/>
                     
-                    <div style="display:none">
-                        <span class="input-label">X: </span> <input type="number" id="axisX" class="input-text"
+                    <div id="bezierM2" style="display:none">
+                        <span class="input-label">X(M2): </span> <input type="number" id="axisX2" class="input-text"
                             min="150" max="360" value="150">
-                        <span class="input-label">X: </span> <input type="number" id="axisY" class="input-text" min="0"
+                        <span class="input-label">Y(M2): </span> <input type="number" id="axisY2" class="input-text" min="0"
                             max="360" value="0">
-                        <span class="input-label">Z: </span> <input type="number" id="axisZ" class="input-text" min="0"
+                        <span class="input-label">Z(M2): </span> <input type="number" id="axisZ2" class="input-text" min="0"
                             max="360" value="0">
-                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text"
-                            min="0" max="360" value="1">
                     </div>
+
+                    <br/> <br/>
+                    
+                    <div id="bezierM3" style="display:none">
+                        <span class="input-label">X(M3): </span> <input type="number" id="axisX3" class="input-text"
+                            min="150" max="360" value="0">
+                        <span class="input-label">Y(M3): </span> <input type="number" id="axisY3" class="input-text" min="0"
+                            max="360" value="0">
+                        <span class="input-label">Z(M3): </span> <input type="number" id="axisZ3" class="input-text" min="0"
+                            max="360" value="0">
+                    </div>
+
+
                 </div>
                 <br /><br />
                 <button onclick="objInterface.buttonAddCommand()" type="button" class="button bg-green font-white"
                     style="width:90%; margin-left:5%"> Add </button>
 
             </div>
-
-
-
-
-
-
-
-
-
 
 
 

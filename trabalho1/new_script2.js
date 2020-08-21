@@ -321,6 +321,10 @@ class Utils {
     degToRad(d) {
         return d * Math.PI / 180;
     }
+
+    ruleOfThree(maxValue, maxPercentage, minValue){
+        return (minValue * maxPercentage) / maxValue;
+    }
 };
 
 
@@ -672,7 +676,7 @@ class Interface {
         this.indexInterface += 1;
         let name = "Object " + String(this.indexInterface);
         option.appendChild(document.createTextNode(name));
-        option.value = "Object-"+String(this.webGL.listObjects.length)
+        option.value = "Object-" + String(this.webGL.listObjects.length)
         selectObjectHTML.appendChild(option);
     }
 
@@ -696,7 +700,7 @@ class Interface {
     // Buttons Add Commands
     buttonAddCommand() {
         //console.log("[Interface][buttonAddCommand]");
-        
+
         // Create Command By Input
         let command = this.createCommand();
 
@@ -705,7 +709,7 @@ class Interface {
 
         // Add Command to a Select Interface
         let selectCommandHTML = document.getElementById('listCommands');
-        let name = command["nameObject"] + " = " + command['type'][0].toUpperCase() + ", " + command['axisX'] + ", " + command['axisY'] + ", " + command['axisZ'] + ", " + command['time'];
+        let name = command["nameObject"] + " = " + command['type'][0].toUpperCase() + ", " + command['axisX1'] + ", " + command['axisY1'] + ", " + command['axisZ1'] + ", " + command['time'];
 
         let option = document.createElement('option');
         option.appendChild(document.createTextNode(name));
@@ -715,16 +719,16 @@ class Interface {
         // Clear Inputs
         this.clearCommand();
     }
-    
+
     buttonRunAllCommands() {
         //console.log("[Interface][runAllCommands] > Running...");
         //console.log(this.listCommands);
-    
+
         requestAnimationFrame(animation);
 
     }
 
-    buttonRunCommand(){
+    buttonRunCommand() {
         let selectCommandsHTML = document.getElementById("listCommands");
         let commandIndex = selectCommandsHTML.selectedIndex;
 
@@ -743,13 +747,13 @@ class Interface {
         console.log(selectCommandsHTML);
 
         var length = selectCommandsHTML.options.length;
-        for (let i = length-1; i >= 0; i--) {
+        for (let i = length - 1; i >= 0; i--) {
             selectCommandsHTML.options[i] = null;
         }
     }
 
-    buttonRemoveCommand(){
-        
+    buttonRemoveCommand() {
+
         // Get Index Selected
         let selectCommandsHTML = document.getElementById("listCommands");
         let currentIndex = selectCommandsHTML.selectedIndex;
@@ -758,12 +762,12 @@ class Interface {
         objWebGL.listCommands.splice(currentIndex, 1);
 
         selectCommandsHTML.options[currentIndex] = null;
-        
+
 
     }
 
     // Buttons Utils
-    getCurrentIndexObject(){
+    getCurrentIndexObject() {
         //console.log("[Interface][getCurrentIndexObject]");
         let selectObjectHTML = document.getElementById("selectObject");
         let currentIndex = selectObjectHTML.selectedIndex;
@@ -775,28 +779,49 @@ class Interface {
 
     createCommand() {
         //console.log("[Interface][createCommand] > Running...");
-        let axisX = Number(document.getElementById('axisX').value);
-        let axisY = Number(document.getElementById('axisY').value);
-        let axisZ = Number(document.getElementById('axisZ').value);
+        let axisX1 = Number(document.getElementById('axisX1').value);
+        let axisX2 = Number(document.getElementById('axisX2').value);
+        let axisX3 = Number(document.getElementById('axisX3').value);
+
+        let axisY1 = Number(document.getElementById('axisY1').value);
+        let axisY2 = Number(document.getElementById('axisY2').value);
+        let axisY3 = Number(document.getElementById('axisY3').value);
+
+        let axisZ1 = Number(document.getElementById('axisZ1').value);
+        let axisZ2 = Number(document.getElementById('axisZ2').value);
+        let axisZ3 = Number(document.getElementById('axisZ3').value);
+
         let time = Number(document.getElementById('time').value);
+
 
         const command = {
             nameObject: String(document.getElementById("selectObject").value),
             idObject: this.getCurrentIndexObject(),
             type: String(document.getElementById("menuCommands").value),
-            axisX: axisX,
-            axisY: axisY,
-            axisZ: axisZ,
+            axisX1: axisX1,
+            axisY1: axisY1,
+            axisZ1: axisZ1,
+
+            axisX2: axisX2,
+            axisY2: axisY2,
+            axisZ2: axisZ2,
+
+            axisX3: axisX3,
+            axisY3: axisY3,
+            axisZ3: axisZ3,
+
+
             time: time,
-            translationSpeedX: this.calculateTranslationSpeed(axisX, time),
-            translationSpeedY: this.calculateTranslationSpeed(axisY, time),
-            translationSpeedZ: this.calculateTranslationSpeed(axisZ, time),
-            rotationSpeedX: this.calculateRotationSpeed(axisX, time),
-            rotationSpeedY: this.calculateRotationSpeed(axisY, time),
-            rotationSpeedZ: this.calculateRotationSpeed(axisZ, time),
-            scaleSpeedX: this.calculateScaleSpeed(axisX, time),
-            scaleSpeedY: this.calculateScaleSpeed(axisY, time),
-            scaleSpeedZ: this.calculateScaleSpeed(axisZ, time)
+
+            translationSpeedX: this.calculateTranslationSpeed(axisX1, time),
+            translationSpeedY: this.calculateTranslationSpeed(axisY1, time),
+            translationSpeedZ: this.calculateTranslationSpeed(axisZ1, time),
+            rotationSpeedX: this.calculateRotationSpeed(axisX1, time),
+            rotationSpeedY: this.calculateRotationSpeed(axisY1, time),
+            rotationSpeedZ: this.calculateRotationSpeed(axisZ1, time),
+            scaleSpeedX: this.calculateScaleSpeed(axisX1, time),
+            scaleSpeedY: this.calculateScaleSpeed(axisY1, time),
+            scaleSpeedZ: this.calculateScaleSpeed(axisZ1, time)
 
         }
         return command;
@@ -805,9 +830,9 @@ class Interface {
 
     clearCommand() {
         //console.log("[Interface][clearCommand] > Running...");
-        document.getElementById('axisX').value = 0
-        document.getElementById('axisY').value = 0
-        document.getElementById('axisZ').value = 0
+        document.getElementById('axisX1').value = 0
+        document.getElementById('axisY1').value = 0
+        document.getElementById('axisZ1').value = 0
         document.getElementById('time').value = 2
     }
 
@@ -826,6 +851,28 @@ class Interface {
     calculateScaleSpeed(axis, time) {
         return Number(axis) / Number(time);
     }
+
+    // Controls if is Bezier
+    isBezier(value) {
+
+
+        var bezierM2 = document.getElementById("bezierM2");
+        var bezierM3 = document.getElementById("bezierM3");
+
+        if (value == "bezierQuadratic") {
+            bezierM2.style = "display:block";
+            bezierM3.style = "display:none";
+
+        } else if (value == "bezierCubic") {
+            bezierM2.style = "display:block";
+            bezierM3.style = "display:block";
+
+        } else {
+            bezierM2.style = "display:none";
+            bezierM3.style = "display:none";
+
+        }
+    }
 };
 
 
@@ -834,7 +881,7 @@ objWebGL = new WebGL();
 objInterface = new Interface(objWebGL);
 
 
-// Animation
+// Animations
 var then = 0;
 var temp = 0;
 function animation(now) {
@@ -845,8 +892,8 @@ function animation(now) {
 
     var command = objWebGL.listCommands[objWebGL.indexObject]
     var object = objWebGL.getObject(command.idObject);
-    
 
+    console.log(command);
     if (then == 0) {
         then = now;
         temp = 0;
@@ -864,15 +911,58 @@ function animation(now) {
                 object.rotation[1] += command.rotationSpeedY * deltaTime;
                 object.rotation[2] += command.rotationSpeedZ * deltaTime;
             } else if (command.type == "scale") {
-                
+
                 object.scale[0] += command.scaleSpeedX * deltaTime;
                 object.scale[1] += command.scaleSpeedY * deltaTime;
                 object.scale[2] += command.scaleSpeedZ * deltaTime;
             } else if (command.type == "bezierQuadratic") {
-                //console.log("");
+                var points = [
+                    {
+                        "x": object.translation[0],
+                        "y": object.translation[1],
+                    },
+                    {
+                        "x": command.axisX1,
+                        "y": command.axisY1,
+                    },
+                    {
+                        "x": command.axisX2,
+                        "y": command.axisY2,
+                    },
+                ];
+                var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
+                
+                var T = minPercentage;
+                object.translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * object.translation[0];
+                object.translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * object.translation[1];
+
             } else if (command.type == "bezierCubic") {
-                //console.log("");
+                var p = [
+                    {
+                      "x": object.translation[0],
+                      "y": object.translation[1],
+                    },
+                    {
+                      "x": command.axisX1,
+                      "y": command.axisY1,
+                    },
+                    {
+                      "x": command.axisX2,
+                      "y": command.axisY2,
+                    },
+                    {
+                      "x": command.axisX3,
+                      "y": command.axisY3,
+                    },
+                  ];
+                  
+                  var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
+                  
+                  var t = minPercentage;
+                  object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
+                  object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
             }
+            
             objWebGL.drawScene();
             requestAnimationFrame(animation);
 
@@ -897,9 +987,9 @@ function animationUnique(now) {
     temp = temp + deltaTime;
 
     var command = objWebGL.listCommands[objWebGL.runCommand];
-    
+
     var object = objWebGL.getObject(command.idObject);
-    console.log(object);
+
 
     if (then == 0) {
         then = now;
@@ -918,19 +1008,62 @@ function animationUnique(now) {
                 object.rotation[1] += command.rotationSpeedY * deltaTime;
                 object.rotation[2] += command.rotationSpeedZ * deltaTime;
             } else if (command.type == "scale") {
-                
+
                 object.scale[0] += command.scaleSpeedX * deltaTime;
                 object.scale[1] += command.scaleSpeedY * deltaTime;
                 object.scale[2] += command.scaleSpeedZ * deltaTime;
             } else if (command.type == "bezierQuadratic") {
-                //console.log("");
+                var points = [
+                    {
+                        "x": object.translation[0],
+                        "y": object.translation[1],
+                    },
+                    {
+                        "x": command.axisX1,
+                        "y": command.axisY1,
+                    },
+                    {
+                        "x": command.axisX2,
+                        "y": command.axisY2,
+                    },
+                ];
+                var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
+                
+                var T = minPercentage;
+                object.translation[0] = 2 * (1 - T) * T * points[1].x + T * T * points[2].x + (1 - T) * (1 - T) * object.translation[0];
+                object.translation[1] = 2 * (1 - T) * T * points[1].y + T * T * points[2].y + (1 - T) * (1 - T) * object.translation[1];
+
             } else if (command.type == "bezierCubic") {
-                //console.log("");
+                var p = [
+                    {
+                      "x": object.translation[0],
+                      "y": object.translation[1],
+                    },
+                    {
+                      "x": command.axisX1,
+                      "y": command.axisY1,
+                    },
+                    {
+                      "x": command.axisX2,
+                      "y": command.axisY2,
+                    },
+                    {
+                      "x": command.axisX3,
+                      "y": command.axisY3,
+                    },
+                  ];
+                  
+                  var minPercentage = utils.ruleOfThree(maxValue=command.time, maxPercentage=1.0, minValue=temp);
+                  
+                  var t = minPercentage;
+                  object.translation[0] = (1 - t) * (1 - t) * (1 - t) * object.translation[0] + 3 * (1 - t) * (1 - t) * t * p[1].x + 3 * (1 - t) * t * t * p[2].x + t * t * t * p[3].x;
+                  object.translation[1] = (1 - t) * (1 - t) * (1 - t) * object.translation[1] + 3 * (1 - t) * (1 - t) * t * p[1].y + 3 * (1 - t) * t * t * p[2].y + t * t * t * p[3].y;
             }
+
             objWebGL.drawScene();
             requestAnimationFrame(animationUnique);
 
-        } else{
+        } else {
             objWebGL.indexObject = 0;
             temp = 0;
             then = 0;
