@@ -383,10 +383,10 @@ class Camera {
         return utils.m4.projection(this.canvasWidth, this.canvasHeight, this.canvasDepth);
     }
 
-    createCameraPerspective(){
+    createCameraPerspective() {
         //var perspectiveCamera = [0, 0, -200];
         var cameraMatrix = utils.m4.lookAt(this.perspectiveCamera, this.target, this.up, utils.m4);
-        
+
         this.worldMatrix = utils.m4.zRotation(this.zRotation);
         this.worldMatrix = utils.m4.xRotate(this.worldMatrix, this.xRotation);
         this.worldMatrix = utils.m4.yRotate(this.worldMatrix, this.yRotation);
@@ -407,17 +407,17 @@ class Camera {
         var lookAtCamera = [this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]]
         var cameraMatrix = utils.m4.lookAt(lookAtCamera, this.target, this.up, utils.m4);
 
-        let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
-
-        worldMatrix = utils.m4.zRotation(utils.degToRad(180));
-        worldMatrix = utils.m4.translate(worldMatrix, -300, -180, 0);
+        this.worldMatrix = utils.m4.zRotation(this.zRotation);
+        this.worldMatrix = utils.m4.xRotate(this.worldMatrix, this.xRotation);
+        this.worldMatrix = utils.m4.yRotate(this.worldMatrix, this.yRotation);
+        this.worldMatrix = utils.m4.translate(this.worldMatrix, -300, -180, 0);
 
         let matrix = []
         var viewMatrix = utils.m4.inverse(cameraMatrix);
         this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
         let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
         matrix = utils.m4.multiply(perspectiveMatrix, viewMatrix);
-        matrix = utils.m4.multiply(matrix, worldMatrix);
+        matrix = utils.m4.multiply(matrix, this.worldMatrix);
         return matrix;
 
     }
@@ -443,7 +443,7 @@ class Camera {
         return function (event, ui) {
             webGL.camera.xRotation = utils.degToRad(ui.value);
             webGL.drawScene();
-            
+
         };
     }
 
@@ -452,7 +452,7 @@ class Camera {
         return function (event, ui) {
             webGL.camera.yRotation = utils.degToRad(ui.value);
             webGL.drawScene();
-            
+
         };
     }
 
@@ -461,7 +461,7 @@ class Camera {
         return function (event, ui) {
             webGL.camera.zRotation = utils.degToRad(ui.value);
             webGL.drawScene();
-            
+
         };
     }
 }
@@ -952,7 +952,7 @@ class Interface {
         do {
             var y = Math.floor(Math.random() * Number(objWebGL.gl.canvas.clientHeight));
         } while (y < 150 || y > Math.random() * Number(objWebGL.gl.canvas.clientHeight + 150));
-      
+
         var z = Math.floor(Math.random() * 800);
         console.log(x, y);
         this.webGL.listObjects.push(new ObjectF(x, y, z));
@@ -1338,15 +1338,21 @@ function animationUnique(now) {
     } else {
         then = now;
 
-        if (temp < command.time) {
+        if (temp <= command.time) {
             if (command.type == "translation") {
                 object.translation[0] += command.translationSpeedX * deltaTime;
                 object.translation[1] += command.translationSpeedY * deltaTime;
                 object.translation[2] += command.translationSpeedZ * deltaTime;
             } else if (command.type == "rotation") {
-                object.rotation[0] += command.rotationSpeedX * deltaTime;
-                object.rotation[1] += command.rotationSpeedY * deltaTime;
-                object.rotation[2] += command.rotationSpeedZ * deltaTime;
+                if (command.rotationSpeedX != -1) {
+                    object.rotation[0] += command.rotationSpeedX * deltaTime;
+                }
+                if (command.rotationSpeedY != -1) {
+                    object.rotation[1] += command.rotationSpeedY * deltaTime;
+                }
+                if (command.rotationSpeedZ != -1) {
+                    object.rotation[2] += command.rotationSpeedZ * deltaTime;
+                }
             } else if (command.type == "scale") {
 
                 object.scale[0] += command.scaleSpeedX * deltaTime;
@@ -1401,7 +1407,7 @@ function animationUnique(now) {
             }
 
             objWebGL.drawScene();
-            requestAnimationFrame(animationUnique);
+            requestAnimationFrame(animation);
 
         } else {
             objWebGL.indexObject = 0;
@@ -1422,4 +1428,4 @@ webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.cam
 
 webglLessonsUI.setupSlider("#cameraRotationX", { value: 0, slide: objWebGL.camera.updateRotationX(objWebGL), min: 0, max: 360, step: 0.01 });
 webglLessonsUI.setupSlider("#cameraRotationY", { value: 0, slide: objWebGL.camera.updateRotationY(objWebGL), min: 0, max: 360, step: 0.01 });
-webglLessonsUI.setupSlider("#cameraRotationZ", { value: 0, slide: objWebGL.camera.updateRotationZ(objWebGL), min: 0, max: 360, step: 0.01 });
+webglLessonsUI.setupSlider("#cameraRotationZ", { value: 180, slide: objWebGL.camera.updateRotationZ(objWebGL), min: 0, max: 360, step: 0.01 });
