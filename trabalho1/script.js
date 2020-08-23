@@ -464,7 +464,12 @@ class Camera {
 
         };
     }
+
+
 }
+
+
+
 
 
 class WebGL {
@@ -1423,8 +1428,6 @@ webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.update
 webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -800, max: 800 });
 webglLessonsUI.setupSlider("#cameraZ", { value: -200, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -2000, max: 2000 });
 webglLessonsUI.setupSlider("#cameraZoom", { value: 100, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
-webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
-webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 
 webglLessonsUI.setupSlider("#cameraRotationX", { value: 0, slide: objWebGL.camera.updateRotationX(objWebGL), min: 0, max: 360, step: 0.01 });
 webglLessonsUI.setupSlider("#cameraRotationY", { value: 0, slide: objWebGL.camera.updateRotationY(objWebGL), min: 0, max: 360, step: 0.01 });
