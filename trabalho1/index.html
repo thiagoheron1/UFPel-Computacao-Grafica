@@ -48,16 +48,16 @@
                 <div style="flex-grow: 4; text-align:center">
 
                     <div>
-                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text" min="150" max="360" value="180">
+                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Y: </span> <input type="number" id="axisY1" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Z: </span> <input type="number" id="axisZ1" class="input-text" min="0" max="360" value="0">
-                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text" min="0" max="360" value="4">
+                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text" min="0" max="360" value="3">
                     </div>
                     
                     <br/> <br/>
                     
                     <div id="bezierM2" style="display:none">
-                        <span class="input-label">X(M2): </span> <input type="number" id="axisX2" class="input-text" min="150" max="360" value="150">
+                        <span class="input-label">X(M2): </span> <input type="number" id="axisX2" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Y(M2): </span> <input type="number" id="axisY2" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Z(M2): </span> <input type="number" id="axisZ2" class="input-text" min="0" max="360" value="0">
                     </div>
@@ -65,7 +65,7 @@
                     <br/> <br/>
                     
                     <div id="bezierM3" style="display:none">
-                        <span class="input-label">X(M3): </span> <input type="number" id="axisX3" class="input-text" min="150" max="360" value="0">
+                        <span class="input-label">X(M3): </span> <input type="number" id="axisX3" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Y(M3): </span> <input type="number" id="axisY3" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Z(M3): </span> <input type="number" id="axisZ3" class="input-text" min="0" max="360" value="0">
                     </div>
@@ -116,6 +116,9 @@
                         <div id="cameraZ"></div>
                         <div id="cameraBezierQuadratic"></div>
                         <div id="cameraBezierCubic"></div>
+                        <div id="cameraRotationX"></div>
+                        <div id="cameraRotationY"></div>
+                        <div id="cameraRotationZ"></div>
                     </div>
                 </div>
 

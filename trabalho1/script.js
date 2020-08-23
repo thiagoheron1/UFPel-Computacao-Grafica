@@ -357,15 +357,20 @@ class Camera {
         this.positionCamera = [0, 0, -200];
         this.zoom = 100;
 
+        this.perspectiveCamera = [0, 0, -200];
+        this.xRotation = utils.degToRad(0);
+        this.yRotation = utils.degToRad(0);
+        this.zRotation = utils.degToRad(180)
+
     }
 
     selectCamera(typeCamera) {
         if (typeCamera == "projection") {
-            return this.calculateProjection();
+            return this.createCameraProjection();
         } else if (typeCamera == "perspective") {
-            return this.calculatePerspectiveOrLookAt(true);
+            return this.createCameraPerspective();
         } else if (typeCamera == "lookAt") {
-            return this.calculatePerspectiveOrLookAt(false);
+            return this.createCameraLookAt();
         } else if (typeCamera == "followObject") {
             console.log("Camera FollowObject");
         } else {
@@ -373,36 +378,39 @@ class Camera {
         }
     }
 
-    calculateProjection() {
+    createCameraProjection() {
         console.log("[Camera][Projection] > Running...");
         return utils.m4.projection(this.canvasWidth, this.canvasHeight, this.canvasDepth);
     }
 
-    calculatePerspectiveOrLookAt(perspective) {
+    createCameraPerspective(){
+        //var perspectiveCamera = [0, 0, -200];
+        var cameraMatrix = utils.m4.lookAt(this.perspectiveCamera, this.target, this.up, utils.m4);
+        
+        this.worldMatrix = utils.m4.zRotation(this.zRotation);
+        this.worldMatrix = utils.m4.xRotate(this.worldMatrix, this.xRotation);
+        this.worldMatrix = utils.m4.yRotate(this.worldMatrix, this.yRotation);
 
-        if (perspective) {
-            var perspectiveCamera = [0, 0, -200];
-            var cameraMatrix = utils.m4.lookAt(perspectiveCamera, this.target, this.up, utils.m4);
+        this.worldMatrix = utils.m4.translate(this.worldMatrix, -300, -180, 200);
+        this.worldMatrix = utils.m4.translate(this.worldMatrix, this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]);
 
-        } else {
-            console.log(this.positionCamera);
-            var lookAtCamera = [this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]]
-            var cameraMatrix = utils.m4.lookAt(lookAtCamera, this.target, this.up, utils.m4);
-        }
+        let matrix = []
+        var viewMatrix = utils.m4.inverse(cameraMatrix);
+        this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
+        let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
+        matrix = utils.m4.multiply(perspectiveMatrix, viewMatrix);
+        matrix = utils.m4.multiply(matrix, this.worldMatrix);
+        return matrix;
+    }
+
+    createCameraLookAt() {
+        var lookAtCamera = [this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]]
+        var cameraMatrix = utils.m4.lookAt(lookAtCamera, this.target, this.up, utils.m4);
 
         let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
 
-        if (perspective) {
-            console.log("[Camera][Perspective] > Perspective...");
-            worldMatrix = utils.m4.zRotation(utils.degToRad(180));
-            worldMatrix = utils.m4.translate(worldMatrix, 0, 0, 200);
-            worldMatrix = utils.m4.translate(worldMatrix, 35, -75, -5);
-            worldMatrix = utils.m4.translate(worldMatrix, this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]);
-        } else {
-            console.log("[Camera][Perspective] > LookAt...");
-            worldMatrix = utils.m4.zRotation(utils.degToRad(180));
-
-        }
+        worldMatrix = utils.m4.zRotation(utils.degToRad(180));
+        worldMatrix = utils.m4.translate(worldMatrix, -300, -180, 0);
 
         let matrix = []
         var viewMatrix = utils.m4.inverse(cameraMatrix);
@@ -427,6 +435,33 @@ class Camera {
         return function (event, ui) {
             webGL.camera.zoom = ui.value;
             webGL.drawScene();
+        };
+    }
+
+    updateRotationX(webGL) {
+        //console.log("[WebGL][updatePosition] > Running...");
+        return function (event, ui) {
+            webGL.camera.xRotation = utils.degToRad(ui.value);
+            webGL.drawScene();
+            
+        };
+    }
+
+    updateRotationY(webGL) {
+        //console.log("[WebGL][updatePosition] > Running...");
+        return function (event, ui) {
+            webGL.camera.yRotation = utils.degToRad(ui.value);
+            webGL.drawScene();
+            
+        };
+    }
+
+    updateRotationZ(webGL) {
+        //console.log("[WebGL][updatePosition] > Running...");
+        return function (event, ui) {
+            webGL.camera.zRotation = utils.degToRad(ui.value);
+            webGL.drawScene();
+            
         };
     }
 }
@@ -880,7 +915,6 @@ class WebGL {
         let Y = 1;
         let Z = 2;
 
-        //object.matrix = utils.m4.projection(this.gl.canvas.clientWidth, this.gl.canvas.clientHeight, 400);
         object.matrix = this.camera.selectCamera(this.currentCamera);
         object.matrix = utils.m4.translate(object.matrix, object.translation[X], object.translation[Y], object.translation[Z]);
         object.matrix = utils.m4.xRotate(object.matrix, object.rotation[X]);
@@ -911,7 +945,17 @@ class Interface {
         //console.log("[Interface][buttonAddObject]");
 
         // Add Object to WebGL
-        this.webGL.listObjects.push(new ObjectF(0, 0, 0));
+
+        do {
+            var x = Math.floor(Math.random() * Number(objWebGL.gl.canvas.clientWidth));
+        } while (x < 150 || x > Math.random() * Number(objWebGL.gl.canvas.clientWidth + 150));
+        do {
+            var y = Math.floor(Math.random() * Number(objWebGL.gl.canvas.clientHeight));
+        } while (y < 150 || y > Math.random() * Number(objWebGL.gl.canvas.clientHeight + 150));
+      
+        var z = Math.floor(Math.random() * 800);
+        console.log(x, y);
+        this.webGL.listObjects.push(new ObjectF(x, y, z));
         this.webGL.drawScene();
 
 
@@ -1111,9 +1155,9 @@ class Interface {
             if (time == 5) {
                 if (axis >= 360) {
                     speed = (1.26 * axis) / 360;
-                } else if (axis < 360) { 
+                } else if (axis < 360) {
                     speed = (axis * 1.26) / 360;
-                }        
+                }
             }
 
             else if (time > 5) {
@@ -1127,10 +1171,10 @@ class Interface {
 
             } else if (time < 5) {
                 if (axis >= 360) {
-                    speed = (1.26 * 5 * axis) / (time * 360 );
+                    speed = (1.26 * 5 * axis) / (time * 360);
                 } else {
                     console.log("here")
-                    speed = (1.26 * 5 * axis) / (time * 360 );
+                    speed = (1.26 * 5 * axis) / (time * 360);
                 }
 
             }
@@ -1369,9 +1413,13 @@ function animationUnique(now) {
 };
 
 
-webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.updateCameraPosition(0, objWebGL), min: -800, max: 800 });
+webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -800, max: 800 });
 webglLessonsUI.setupSlider("#cameraZ", { value: -200, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -2000, max: 2000 });
 webglLessonsUI.setupSlider("#cameraZoom", { value: 100, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
+
+webglLessonsUI.setupSlider("#cameraRotationX", { value: 0, slide: objWebGL.camera.updateRotationX(objWebGL), min: 0, max: 360, step: 0.01 });
+webglLessonsUI.setupSlider("#cameraRotationY", { value: 0, slide: objWebGL.camera.updateRotationY(objWebGL), min: 0, max: 360, step: 0.01 });
+webglLessonsUI.setupSlider("#cameraRotationZ", { value: 0, slide: objWebGL.camera.updateRotationZ(objWebGL), min: 0, max: 360, step: 0.01 });
