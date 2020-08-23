@@ -37,7 +37,7 @@
                 <div style="flex-grow: 4;">
                     <select onchange="objInterface.isBezier(this.value)" id="menuCommands" class="menuSelect">
                         <option value="translation">Translation</option>
-                        <option value="rotation">Rotation</option>
+                        <option selected value="rotation">Rotation</option>
                         <option value="scale">Scale</option>
                         <option value="bezierQuadratic">Bezier Quadratic</option>
                         <option value="bezierCubic">Bezier Cubic</option>
@@ -48,10 +48,10 @@
                 <div style="flex-grow: 4; text-align:center">
 
                     <div>
-                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text" min="150" max="360" value="150">
+                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text" min="150" max="360" value="180">
                         <span class="input-label">Y: </span> <input type="number" id="axisY1" class="input-text" min="0" max="360" value="0">
                         <span class="input-label">Z: </span> <input type="number" id="axisZ1" class="input-text" min="0" max="360" value="0">
-                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text" min="0" max="360" value="1">
+                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text" min="0" max="360" value="4">
                     </div>
                     
                     <br/> <br/>

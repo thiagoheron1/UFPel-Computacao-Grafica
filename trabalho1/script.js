@@ -484,7 +484,7 @@ class WebGL {
 
 
         // Objects and Commands
-        this.listObjects = [new ObjectF(0, 0, 0)];
+        this.listObjects = [new ObjectF(180, 180, 0)];
         this.indexObject = 0;
         this.listCommands = [];
         this.runCommand = 0;
@@ -1102,8 +1102,41 @@ class Interface {
     }
 
     calculateRotationSpeed(axis, time) {
-        let x = (1.2 * time * axis) / 360
-        return x / time;
+        if (axis == 0) {
+            return -1;
+        } else {
+
+            // Ok
+            var speed = 0;
+            if (time == 5) {
+                if (axis >= 360) {
+                    speed = (1.26 * axis) / 360;
+                } else if (axis < 360) { 
+                    speed = (axis * 1.26) / 360;
+                }        
+            }
+
+            else if (time > 5) {
+                if (axis > 360) {
+                    speed = (1.26 * 5 * axis) / (time * 360)
+                } else {
+                    speed = (1.26 * 5 * axis) / (time * 360);
+                }
+
+
+
+            } else if (time < 5) {
+                if (axis >= 360) {
+                    speed = (1.26 * 5 * axis) / (time * 360 );
+                } else {
+                    console.log("here")
+                    speed = (1.26 * 5 * axis) / (time * 360 );
+                }
+
+            }
+            console.log("Axis: ", axis, " Time: ", time, " Speed:", speed);
+            return speed;
+        }
     }
 
     calculateScaleSpeed(axis, time) {
@@ -1150,7 +1183,7 @@ function animation(now) {
     var command = objWebGL.listCommands[objWebGL.indexObject]
     var object = objWebGL.getObject(command.idObject);
 
-    console.log(command);
+    //console.log(command);
     if (then == 0) {
         then = now;
         temp = 0;
@@ -1158,15 +1191,21 @@ function animation(now) {
     } else {
         then = now;
 
-        if (temp < command.time) {
+        if (temp <= command.time) {
             if (command.type == "translation") {
                 object.translation[0] += command.translationSpeedX * deltaTime;
                 object.translation[1] += command.translationSpeedY * deltaTime;
                 object.translation[2] += command.translationSpeedZ * deltaTime;
             } else if (command.type == "rotation") {
-                object.rotation[0] += command.rotationSpeedX * deltaTime;
-                object.rotation[1] += command.rotationSpeedY * deltaTime;
-                object.rotation[2] += command.rotationSpeedZ * deltaTime;
+                if (command.rotationSpeedX != -1) {
+                    object.rotation[0] += command.rotationSpeedX * deltaTime;
+                }
+                if (command.rotationSpeedY != -1) {
+                    object.rotation[1] += command.rotationSpeedY * deltaTime;
+                }
+                if (command.rotationSpeedZ != -1) {
+                    object.rotation[2] += command.rotationSpeedZ * deltaTime;
+                }
             } else if (command.type == "scale") {
 
                 object.scale[0] += command.scaleSpeedX * deltaTime;
