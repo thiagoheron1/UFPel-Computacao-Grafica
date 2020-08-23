@@ -15,7 +15,7 @@ body{
 
 .button{
     width: 55px;
-    height: 30px;
+    height: 40px;
     border:0px;
     border-radius: 5px;
     font-weight: bold;
@@ -77,4 +77,11 @@ body{
     color: white;
     cursor: pointer;
     
+}
+
+#canvas{
+    border:2px solid rgb(69, 69, 197);;
+ 
+    margin-top:1%;
+    margin-bottom:1%;
 }

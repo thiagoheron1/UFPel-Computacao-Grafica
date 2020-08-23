@@ -7,7 +7,7 @@ class Utils {
 
             projection: function (width, height, depth) {
                 // Note: This matrix flips the Y axis so 0 is at the top.
-                //////console.log("[projection] > Starting...");
+                //console.log("[projection] > Starting...");
                 return [
                     2 / width, 0, 0, 0,
                     0, -2 / height, 0, 0,
@@ -17,7 +17,7 @@ class Utils {
             },
 
             multiply: function (a, b) {
-                //////console.log("[multiply] > Starting...");
+                //console.log("[multiply] > Starting...");
                 var a00 = a[0 * 4 + 0];
                 var a01 = a[0 * 4 + 1];
                 var a02 = a[0 * 4 + 2];
@@ -71,7 +71,7 @@ class Utils {
             },
 
             translation: function (tx, ty, tz) {
-                //////console.log("[translation] > Starting...");
+                //console.log("[translation] > Starting...");
                 return [
                     1, 0, 0, 0,
                     0, 1, 0, 0,
@@ -81,7 +81,7 @@ class Utils {
             },
 
             xRotation: function (angleInRadians) {
-                //////console.log("[xRotation] > Starting...");
+                //console.log("[xRotation] > Starting...");
                 var c = Math.cos(angleInRadians);
                 var s = Math.sin(angleInRadians);
 
@@ -94,7 +94,7 @@ class Utils {
             },
 
             yRotation: function (angleInRadians) {
-                //////console.log("[yRotation] > Starting...");
+                //console.log("[yRotation] > Starting...");
                 var c = Math.cos(angleInRadians);
                 var s = Math.sin(angleInRadians);
 
@@ -107,7 +107,7 @@ class Utils {
             },
 
             zRotation: function (angleInRadians) {
-                //////console.log("[zRotation] > Starting...");
+                //console.log("[zRotation] > Starting...");
                 var c = Math.cos(angleInRadians);
                 var s = Math.sin(angleInRadians);
 
@@ -120,7 +120,7 @@ class Utils {
             },
 
             scaling: function (sx, sy, sz) {
-                //////console.log("[scalling] > Starting...");
+                //console.log("[scalling] > Starting...");
                 return [
                     sx, 0, 0, 0,
                     0, sy, 0, 0,
@@ -130,27 +130,27 @@ class Utils {
             },
 
             translate: function (m, tx, ty, tz) {
-                //////console.log("[translate] > Starting...");
+                //console.log("[translate] > Starting...");
                 return this.multiply(m, this.translation(tx, ty, tz));
             },
 
             xRotate: function (m, angleInRadians) {
-                //////console.log("[xRotate] > Starting...");
+                //console.log("[xRotate] > Starting...");
                 return this.multiply(m, this.xRotation(angleInRadians));
             },
 
             yRotate: function (m, angleInRadians) {
-                //////console.log("[yRotate] > Starting...");
+                //console.log("[yRotate] > Starting...");
                 return this.multiply(m, this.yRotation(angleInRadians));
             },
 
             zRotate: function (m, angleInRadians) {
-                //////console.log("[zRotate] > Starting...");
+                //console.log("[zRotate] > Starting...");
                 return this.multiply(m, this.zRotation(angleInRadians));
             },
 
             scale: function (m, sx, sy, sz) {
-                //////console.log("[scale] > Starting...");
+                //console.log("[scale] > Starting...");
                 return this.multiply(m, this.scaling(sx, sy, sz));
             },
 
@@ -331,14 +331,12 @@ class Utils {
 class ObjectF {
     constructor(x = 0, y = 0, z = 0) {
 
-        this.matrix = []; //[50, -60, 0];
+        this.matrix = [];
         this.translation = [x, y, z];
         this.rotation = [utils.degToRad(0), utils.degToRad(180), utils.degToRad(0)];
         this.scale = [-1, 1, 1];
-
         this.color = [Math.random(), Math.random(), Math.random(), 1];
 
-        this.listCommands = [];
     }
 };
 
@@ -380,18 +378,12 @@ class Camera {
         return utils.m4.projection(this.canvasWidth, this.canvasHeight, this.canvasDepth);
     }
 
-
-
     calculatePerspectiveOrLookAt(perspective) {
-        
-        // LookAt o meu positionCamera recebe Sliders
-        // Perspectiva o positionCamera é fixo.
 
-
-        if (perspective){
+        if (perspective) {
             var perspectiveCamera = [0, 0, -200];
             var cameraMatrix = utils.m4.lookAt(perspectiveCamera, this.target, this.up, utils.m4);
-            
+
         } else {
             console.log(this.positionCamera);
             var lookAtCamera = [this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]]
@@ -399,28 +391,21 @@ class Camera {
         }
 
         let worldMatrix = utils.m4.xRotation(utils.degToRad(0));
-        //worldMatrix = utils.m4.yRotation(utils.degToRad(0));
 
-        
-        if (perspective){
+        if (perspective) {
             console.log("[Camera][Perspective] > Perspective...");
             worldMatrix = utils.m4.zRotation(utils.degToRad(180));
             worldMatrix = utils.m4.translate(worldMatrix, 0, 0, 200);
-        
             worldMatrix = utils.m4.translate(worldMatrix, 35, -75, -5);
             worldMatrix = utils.m4.translate(worldMatrix, this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]);
-        } else{ 
+        } else {
             console.log("[Camera][Perspective] > LookAt...");
             worldMatrix = utils.m4.zRotation(utils.degToRad(180));
-            
 
         }
 
-
-        
-        
-        var viewMatrix = utils.m4.inverse(cameraMatrix);
         let matrix = []
+        var viewMatrix = utils.m4.inverse(cameraMatrix);
         this.fieldOfViewsPerspective = utils.degToRad(this.zoom);
         let perspectiveMatrix = utils.m4.perspective(this.fieldOfViewsPerspective, this.aspect, this.zNear, this.zFar);
         matrix = utils.m4.multiply(perspectiveMatrix, viewMatrix);
@@ -453,23 +438,32 @@ class WebGL {
 
         // Source
         this.vertexShaderSource = `#version 300 es
-            in vec4 a_position;
-            uniform mat4 u_matrix;
-            
-            void main() {
-              gl_Position = u_matrix * a_position;
-            }
-            `;
+
+        in vec4 a_position;
+        in vec4 a_color;
+        
+        uniform mat4 u_matrix;
+        
+        out vec4 v_color;
+        
+        void main() {
+        
+          gl_Position = u_matrix * a_position;
+        
+        
+          v_color = a_color;
+        }`
         this.fragmentShaderSource = `#version 300 es
-            
-            precision highp float;
-            uniform vec4 u_color;
-            out vec4 outColor;
-            
-            void main() {
-              outColor = u_color;
-            }
-            `;
+
+        precision highp float;
+        
+        in vec4 v_color;
+        out vec4 outColor;
+        
+        void main() {
+          outColor = v_color;
+        }
+        `;
 
         // Shaders
         this.vertexShader = this.createShader(this.gl.VERTEX_SHADER, this.vertexShaderSource);
@@ -478,13 +472,16 @@ class WebGL {
 
         // Attributes and Uniforms
         this.positionAttributeLocation = this.gl.getAttribLocation(this.program, "a_position");
+        this.colorAttributeLocation = this.gl.getAttribLocation(this.program, "a_color");
         this.matrixLocation = this.gl.getUniformLocation(this.program, "u_matrix");
         this.colorLocation = this.gl.getUniformLocation(this.program, "u_color");
+        this.positionBuffer = this.gl.createBuffer();
 
         // Binds
-        this.createGeometryBuffer();
         this.vao = this.createVertexArrayObject();
-        this.setConfigsBuffer();
+        this.setGeometry();
+        this.setColors();
+
 
         // Objects and Commands
         this.listObjects = [new ObjectF(0, 0, 0)];
@@ -500,10 +497,10 @@ class WebGL {
         this.drawScene();
     }
 
-    // WebGL
+    // WebGL - Configurations
     connectWebGL() {
         /** @type {HTMLCanvasElement} */
-        ////console.log("[WebGL][connectWebGL] > Running...");
+        //console.log("[WebGL][connectWebGL] > Running...");
         var canvas = document.querySelector("#canvas");
         var gl = canvas.getContext("webgl2");
         if (!gl) {
@@ -513,50 +510,58 @@ class WebGL {
     }
 
     createShader(type, source) {
-        ////console.log("[WebGL][createShader] > Running...");
+        //console.log("[WebGL][createShader] > Running...");
 
         var shader = this.gl.createShader(type);
         this.gl.shaderSource(shader, source);
         this.gl.compileShader(shader);
         var success = this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS);
         if (success) {
-            //////console.log("[WebGL][createShader][" + type + "] > Success!");
+            //console.log("[WebGL][createShader][" + type + "] > Success!");
             return shader;
         }
 
-        //////console.log(this.gl.getShaderInfoLog(shader));
+        //console.log(this.gl.getShaderInfoLog(shader));
         this.gl.deleteShader(shader);
     }
 
     createProgram(vertexShader, fragmentShader) {
-        ////console.log("[WebGL][createProgram] > Running...");
+        //console.log("[WebGL][createProgram] > Running...");
         var program = this.gl.createProgram();
         this.gl.attachShader(program, vertexShader);
         this.gl.attachShader(program, fragmentShader);
         this.gl.linkProgram(program);
         var success = this.gl.getProgramParameter(program, this.gl.LINK_STATUS);
         if (success) {
-            //////console.log("[createProgram] > Success!");
+            //console.log("[createProgram] > Success!");
             return program;
         }
     }
 
-    createGeometryBuffer() {
-        ////console.log("[WebGL][createGeometryBuffer] > Running...");
-        var MeshBuffer = this.gl.createBuffer();
-        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, MeshBuffer);
+    createVertexArrayObject() {
+        //console.log("[WebGL][createVertexArrayObject] > Running...");
+        var vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(vao);
+        return vao
+    }
+
+    setGeometry() {
+        //console.log("[WebGL][setGeometry] > Running...");
+        var positionBuffer = this.gl.createBuffer();
+        this.gl.enableVertexAttribArray(this.positionAttributeLocation);
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, positionBuffer);
         this.gl.bufferData(
             this.gl.ARRAY_BUFFER,
             new Float32Array([
-                // left column front
+
                 0, 0, 0,
-                0, 0, 0,
+                30, 0, 0,
                 0, 150, 0,
                 0, 150, 0,
                 30, 0, 0,
                 30, 150, 0,
 
-                // top rung front
+
                 30, 0, 0,
                 100, 0, 0,
                 30, 30, 0,
@@ -564,7 +569,7 @@ class WebGL {
                 100, 0, 0,
                 100, 30, 0,
 
-                // middle rung front
+
                 30, 60, 0,
                 67, 60, 0,
                 30, 90, 0,
@@ -572,7 +577,7 @@ class WebGL {
                 67, 60, 0,
                 67, 90, 0,
 
-                // left column back
+
                 0, 0, 30,
                 30, 0, 30,
                 0, 150, 30,
@@ -580,7 +585,7 @@ class WebGL {
                 30, 0, 30,
                 30, 150, 30,
 
-                // top rung back
+
                 30, 0, 30,
                 100, 0, 30,
                 30, 30, 30,
@@ -588,7 +593,7 @@ class WebGL {
                 100, 0, 30,
                 100, 30, 30,
 
-                // middle rung back
+
                 30, 60, 30,
                 67, 60, 30,
                 30, 90, 30,
@@ -596,7 +601,7 @@ class WebGL {
                 67, 60, 30,
                 67, 90, 30,
 
-                // top
+
                 0, 0, 0,
                 100, 0, 0,
                 100, 0, 30,
@@ -604,7 +609,7 @@ class WebGL {
                 100, 0, 30,
                 0, 0, 30,
 
-                // top rung right
+
                 100, 0, 0,
                 100, 30, 0,
                 100, 30, 30,
@@ -612,7 +617,7 @@ class WebGL {
                 100, 30, 30,
                 100, 0, 30,
 
-                // under top rung
+
                 30, 30, 0,
                 30, 30, 30,
                 100, 30, 30,
@@ -620,7 +625,7 @@ class WebGL {
                 100, 30, 30,
                 100, 30, 0,
 
-                // between top rung and middle
+
                 30, 30, 0,
                 30, 30, 30,
                 30, 60, 30,
@@ -628,7 +633,7 @@ class WebGL {
                 30, 60, 30,
                 30, 60, 0,
 
-                // top of middle rung
+
                 30, 60, 0,
                 30, 60, 30,
                 67, 60, 30,
@@ -636,7 +641,7 @@ class WebGL {
                 67, 60, 30,
                 67, 60, 0,
 
-                // right of middle rung
+
                 67, 60, 0,
                 67, 60, 30,
                 67, 90, 30,
@@ -644,7 +649,7 @@ class WebGL {
                 67, 90, 30,
                 67, 90, 0,
 
-                // bottom of middle rung.
+
                 30, 90, 0,
                 30, 90, 30,
                 67, 90, 30,
@@ -652,7 +657,7 @@ class WebGL {
                 67, 90, 30,
                 67, 90, 0,
 
-                // right of bottom
+
                 30, 90, 0,
                 30, 90, 30,
                 30, 150, 30,
@@ -660,7 +665,7 @@ class WebGL {
                 30, 150, 30,
                 30, 150, 0,
 
-                // bottom
+
                 0, 150, 0,
                 0, 150, 30,
                 30, 150, 30,
@@ -668,7 +673,7 @@ class WebGL {
                 30, 150, 30,
                 30, 150, 0,
 
-                // left side
+
                 0, 0, 0,
                 0, 0, 30,
                 0, 150, 30,
@@ -677,29 +682,166 @@ class WebGL {
                 0, 150, 0,
             ]),
             this.gl.STATIC_DRAW);
-        //////console.log("[createGeometryBuffer] > Success!");
-    }
 
-    createVertexArrayObject() {
-        ////console.log("[WebGL][createVertexArrayObject] > Running...");
-        var vao = this.gl.createVertexArray();
-        this.gl.bindVertexArray(vao);
-        this.gl.enableVertexAttribArray(this.positionAttributeLocation);
-        //////console.log("[createVertexArrayObject] > Success!");
-        return vao
-    }
-
-    setConfigsBuffer() {
-        ////console.log("[WebGL][setConfigsBuffer] > Running...");
-        var size = 3;               // 3 components per iteration
-        var type = this.gl.FLOAT;   // the data is 32bit floats
-        var normalize = false;      // don't normalize the data
-        var stride = 0;             // 0 = move forward size * sizeof(type) each iteration to get the next position
-        var offset = 0;             // start at the beginning of the buffer
+        var size = 3;
+        var type = this.gl.FLOAT;
+        var normalize = false;
+        var stride = 0;
+        var offset = 0;
         this.gl.vertexAttribPointer(this.positionAttributeLocation, size, type, normalize, stride, offset);
 
+
+        //console.log("[setGeometry] > Success!");
     }
 
+    setColors() {
+        var colorBuffer = this.gl.createBuffer();
+        this.gl.bindBuffer(this.gl.ARRAY_BUFFER, colorBuffer);
+        this.gl.bufferData(
+            this.gl.ARRAY_BUFFER,
+            new Uint8Array([
+
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+
+
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+
+
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+                200, 70, 120,
+
+
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+                80, 70, 200,
+
+
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+                70, 200, 210,
+
+
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+                200, 200, 70,
+
+
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+                210, 100, 70,
+
+
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+                210, 160, 70,
+
+
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+                70, 180, 210,
+
+
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+                100, 70, 210,
+
+
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+                76, 210, 100,
+
+
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+                140, 210, 80,
+
+
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+                90, 130, 110,
+
+
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+                160, 160, 220,
+            ]),
+            this.gl.STATIC_DRAW);
+
+        this.gl.enableVertexAttribArray(this.colorAttributeLocation);
+        var size = 3;
+        var type = this.gl.UNSIGNED_BYTE;
+        var normalize = true;
+        var stride = 0;
+        var offset = 0;
+        this.gl.vertexAttribPointer(this.colorAttributeLocation, size, type, normalize, stride, offset);
+
+    }
+
+
+    // WebGL - Draw Scenes
     drawScene() {
 
         this.setSettingsToDraw();
@@ -713,10 +855,15 @@ class WebGL {
 
     setSettingsToDraw() {
         //console.log("[WebGL][drawFirstScene] > Running Settings...");
+        webglUtils.resizeCanvasToDisplaySize(this.gl.canvas);
+
         this.gl.viewport(0, 0, this.gl.canvas.width, this.gl.canvas.height);
+
         this.gl.clearColor(0, 0, 0, 0);
         this.gl.clear(this.gl.COLOR_BUFFER_BIT | this.gl.DEPTH_BUFFER_BIT);
+
         this.gl.useProgram(this.program);
+
         this.gl.bindVertexArray(this.vao);
 
     }
@@ -749,11 +896,7 @@ class WebGL {
         this.gl.drawArrays(this.gl.TRIANGLES, 0, 16 * 6);
     }
 
-    setCommandsToExecute(listCommands) {
-        //console.log(listCommands);
-        this.listCommands = listCommands;
-    }
-}
+};
 
 
 class Interface {
@@ -953,7 +1096,6 @@ class Interface {
     }
 
     // Buttons Calculates Speed
-
     calculateTranslationSpeed(axis, time) {
         return Number(axis) / Number(time);
 
@@ -997,7 +1139,6 @@ objWebGL = new WebGL();
 objInterface = new Interface(objWebGL);
 
 
-// Animations
 var then = 0;
 var temp = 0;
 function animation(now) {
@@ -1191,7 +1332,7 @@ function animationUnique(now) {
 
 webglLessonsUI.setupSlider("#cameraX", { value: 0, slide: objWebGL.camera.updateCameraPosition(0, objWebGL), min: -200, max: 200 });
 webglLessonsUI.setupSlider("#cameraY", { value: 0, slide: objWebGL.camera.updateCameraPosition(1, objWebGL), min: -200, max: 200 });
-webglLessonsUI.setupSlider("#cameraZ", { value: -200, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -200, max: 200 });
+webglLessonsUI.setupSlider("#cameraZ", { value: -200, slide: objWebGL.camera.updateCameraPosition(2, objWebGL), min: -2000, max: 2000 });
 webglLessonsUI.setupSlider("#cameraZoom", { value: 100, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });
 webglLessonsUI.setupSlider("#cameraBezierCubic", { value: 0, slide: objWebGL.camera.updateCameraZoom(objWebGL), min: 0, max: 180 });

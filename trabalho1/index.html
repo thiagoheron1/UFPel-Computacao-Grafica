@@ -13,15 +13,15 @@
     <div style="display:flex; flex-direction: column;">
 
         <!-- Canvas -->
-        <div style=" margin-bottom: 2%; border-bottom: 5px solid rgb(33, 33, 185);">
+        <div style="align-self:center">
             <canvas id="canvas" width="1500px" height="500px"></canvas>
         </div>
 
         <!-- Menus -->
-        <div style="display:flex;">
+        <div style="display:flex; padding-top: 2%; border-top: 5px solid rgb(33, 33, 185);">
 
 
-            <!-- Menu Left - Objects-->
+            <!-- Menu Left - Objects -->
             <div style="flex-grow:1;">
 
                 <!-- Select Object -->
@@ -46,49 +46,38 @@
 
                 <!-- Inputs -->
                 <div style="flex-grow: 4; text-align:center">
-                    <div>
 
-                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text"
-                            min="150" max="360" value="150">
-                        <span class="input-label">Y: </span> <input type="number" id="axisY1" class="input-text" min="0"
-                            max="360" value="0">
-                        <span class="input-label">Z: </span> <input type="number" id="axisZ1" class="input-text" min="0"
-                            max="360" value="0">
-                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text"
-                            min="0" max="360" value="1">
+                    <div>
+                        <span class="input-label">X: </span> <input type="number" id="axisX1" class="input-text" min="150" max="360" value="150">
+                        <span class="input-label">Y: </span> <input type="number" id="axisY1" class="input-text" min="0" max="360" value="0">
+                        <span class="input-label">Z: </span> <input type="number" id="axisZ1" class="input-text" min="0" max="360" value="0">
+                        <span class="input-label">Time: </span> <input type="number" id="time" class="input-text" min="0" max="360" value="1">
                     </div>
                     
                     <br/> <br/>
                     
                     <div id="bezierM2" style="display:none">
-                        <span class="input-label">X(M2): </span> <input type="number" id="axisX2" class="input-text"
-                            min="150" max="360" value="150">
-                        <span class="input-label">Y(M2): </span> <input type="number" id="axisY2" class="input-text" min="0"
-                            max="360" value="0">
-                        <span class="input-label">Z(M2): </span> <input type="number" id="axisZ2" class="input-text" min="0"
-                            max="360" value="0">
+                        <span class="input-label">X(M2): </span> <input type="number" id="axisX2" class="input-text" min="150" max="360" value="150">
+                        <span class="input-label">Y(M2): </span> <input type="number" id="axisY2" class="input-text" min="0" max="360" value="0">
+                        <span class="input-label">Z(M2): </span> <input type="number" id="axisZ2" class="input-text" min="0" max="360" value="0">
                     </div>
 
                     <br/> <br/>
                     
                     <div id="bezierM3" style="display:none">
-                        <span class="input-label">X(M3): </span> <input type="number" id="axisX3" class="input-text"
-                            min="150" max="360" value="0">
-                        <span class="input-label">Y(M3): </span> <input type="number" id="axisY3" class="input-text" min="0"
-                            max="360" value="0">
-                        <span class="input-label">Z(M3): </span> <input type="number" id="axisZ3" class="input-text" min="0"
-                            max="360" value="0">
+                        <span class="input-label">X(M3): </span> <input type="number" id="axisX3" class="input-text" min="150" max="360" value="0">
+                        <span class="input-label">Y(M3): </span> <input type="number" id="axisY3" class="input-text" min="0" max="360" value="0">
+                        <span class="input-label">Z(M3): </span> <input type="number" id="axisZ3" class="input-text" min="0" max="360" value="0">
                     </div>
 
 
                 </div>
                 <br /><br />
-                <button onclick="objInterface.buttonAddCommand()" type="button" class="button bg-green font-white"
-                    style="width:90%; margin-left:5%"> Add </button>
+                <button onclick="objInterface.buttonAddCommand()" type="button" class="button bg-green font-white" style="width:90%; margin-left:5%"> Add </button>
 
             </div>
 
-            <!-- Menu Center> -->
+            <!-- Menu Center - Commands -->
             <div style="flex-grow:10;">
 
                 <div style="display:flex; flex-direction:row; ">
