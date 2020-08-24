@@ -384,7 +384,7 @@ class Camera {
     }
 
     createCameraPerspective() {
-        //var perspectiveCamera = [0, 0, -200];
+
         var cameraMatrix = utils.m4.lookAt(this.perspectiveCamera, this.target, this.up, utils.m4);
 
         this.worldMatrix = utils.m4.zRotation(this.zRotation);
@@ -392,7 +392,7 @@ class Camera {
         this.worldMatrix = utils.m4.yRotate(this.worldMatrix, this.yRotation);
 
         this.worldMatrix = utils.m4.translate(this.worldMatrix, -300, -180, 200);
-        this.worldMatrix = utils.m4.translate(this.worldMatrix, this.positionCamera[0], this.positionCamera[1], this.positionCamera[2]);
+        this.worldMatrix = utils.m4.translate(this.worldMatrix, -this.positionCamera[0], this.positionCamera[1], -this.positionCamera[2]);
 
         let matrix = []
         var viewMatrix = utils.m4.inverse(cameraMatrix);
@@ -465,11 +465,34 @@ class Camera {
         };
     }
 
+    updateBezierQuadratic(webGL) {
+        var points = [
+            {
+                "x": webGL.camera.positionCamera[0],
+                "y": webGL.camera.positionCamera[1],
+            },
+            {
+                "x": 150,
+                "y": 150,
+            },
+            {
+                "x": 300,
+                "y": 0,
+            },
+        ];
+
+        return function (event, ui) {
+            
+    
+            var T = ui.value;
+            webGL.camera.positionCamera[0] = -((1.0 - T) * (1.0 - T) * points[0].x + 2.0 * (1.0 - T) * T * points[1].x + T * T * points[2].x);
+            webGL.camera.positionCamera[1] = -((1.0 - T) * (1.0 - T) * points[0].y + 2.0 * (1.0 - T) * T * points[1].y + T * T * points[2].y);         
+            webGL.drawScene();
+
+        };
+    }
 
 }
-
-
-
 
 
 class WebGL {
@@ -1432,3 +1455,6 @@ webglLessonsUI.setupSlider("#cameraZoom", { value: 100, slide: objWebGL.camera.u
 webglLessonsUI.setupSlider("#cameraRotationX", { value: 0, slide: objWebGL.camera.updateRotationX(objWebGL), min: 0, max: 360, step: 0.01 });
 webglLessonsUI.setupSlider("#cameraRotationY", { value: 0, slide: objWebGL.camera.updateRotationY(objWebGL), min: 0, max: 360, step: 0.01 });
 webglLessonsUI.setupSlider("#cameraRotationZ", { value: 180, slide: objWebGL.camera.updateRotationZ(objWebGL), min: 0, max: 360, step: 0.01 });
+
+webglLessonsUI.setupSlider("#cameraBezierQuadratic", { value: 0, slide: objWebGL.camera.updateBezierQuadratic(objWebGL), min: 0, max: 1, step: 0.01 });
+
